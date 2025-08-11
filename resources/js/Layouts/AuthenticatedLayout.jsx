@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const userRole = usePage().props.auth.user.role;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -24,12 +25,21 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
+                                {userRole === 'admin' ? (
+                                    <NavLink
+                                        href={route('admin.dashboard')}
+                                        active={route().current('admin.dashboard')}
+                                    >
+                                        Dashboard Admin
+                                    </NavLink>
+                                ) : (
+                                    <NavLink
+                                        href={route('dashboard')}
+                                        active={route().current('dashboard')}
+                                    >
+                                        Dashboard Mahasiswa
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
