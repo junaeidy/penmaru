@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Head, usePage } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import {
@@ -21,9 +21,19 @@ import {
     Legend,
 } from "recharts";
 import CountUp from "react-countup";
+import { ToastContainer, toast } from "react-toastify";
 
-export default function Dashboard() {
+export default function Dashboard({ flash }) {
     const user = usePage().props.auth.user;
+
+    useEffect(()=> {
+        if(flash.message.success){
+            toast.success(flash.message.success);
+        }
+        if(flash.message.error){
+            toast.error(flash.message.error);
+        }
+    }, [flash]);
 
     const stats = {
         totalMahasiswa: 150,
@@ -50,8 +60,11 @@ export default function Dashboard() {
     const COLORS = ["#4CAF50", "#FF9800", "#2196F3"];
 
     return (
-        <AdminLayout>
+        <AdminLayout
+            header={`Dashboard Admin`}
+        >
             <Head title="Dashboard Admin" />
+            <ToastContainer />
 
             <div className="space-y-6">
                 {/* WELCOME CARD */}

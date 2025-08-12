@@ -1,12 +1,25 @@
 import MahasiswaLayout from '@/Layouts/MahasiswaLayout';
 import { Head, usePage } from '@inertiajs/react';
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from 'react';
 
-export default function Dashboard() {
+export default function Dashboard({ flash }) {
     const user = usePage().props.auth.user;
+    useEffect(()=> {
+        if(flash.message.success){
+            toast.success(flash.message.success);
+        }
+        if(flash.message.error){
+            toast.error(flash.message.error);
+        }
+    }, [flash]);
 
     return (
-        <MahasiswaLayout>
+        <MahasiswaLayout
+            header={'Dashboard Mahasiswa'}
+        >
             <Head title="Dashboard Mahasiswa" />
+            <ToastContainer />
 
             <div className='space-y-6'>
                 <div className="bg-white p-6 rounded-xl shadow-sm flex justify-between items-center">

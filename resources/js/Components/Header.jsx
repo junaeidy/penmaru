@@ -1,6 +1,5 @@
 import React from 'react';
 import Dropdown from '@/Components/Dropdown';
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import { ChevronDown, Bell, Search } from 'lucide-react';
 
 export default function Header({ onToggleSidebar, header, user }) {
@@ -27,10 +26,12 @@ export default function Header({ onToggleSidebar, header, user }) {
                     </svg>
                 </button>
                 <div className="hidden md:block">
-                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                    
                 </div>
-                <div className="ml-4 font-semibold text-gray-800 text-lg">
-                    {header}
+                <div className="flex-1 md:flex-none md:ml-4 text-center md:text-left">
+                    <h1 className="font-semibold text-gray-800 text-lg md:text-xl">
+                        {header}
+                    </h1>
                 </div>
             </div>
 

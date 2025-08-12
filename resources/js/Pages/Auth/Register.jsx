@@ -7,6 +7,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
+        nik: '',
         name: '',
         email: '',
         password: '',
@@ -27,6 +28,24 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
+                    <InputLabel htmlFor="nik" value="Nik" />
+
+                    <TextInput
+                        id="nik"
+                        type="number"
+                        name="nik"
+                        value={data.nik}
+                        className="mt-1 block w-full"
+                        autoComplete="nik"
+                        isFocused={true}
+                        onChange={(e) => setData('nik', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.nik} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
                     <InputLabel htmlFor="name" value="Name" />
 
                     <TextInput
@@ -35,7 +54,6 @@ export default function Register() {
                         value={data.name}
                         className="mt-1 block w-full"
                         autoComplete="name"
-                        isFocused={true}
                         onChange={(e) => setData('name', e.target.value)}
                         required
                     />

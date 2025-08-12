@@ -5,8 +5,10 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status, canResetPassword, flash }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -21,9 +23,19 @@ export default function Login({ status, canResetPassword }) {
         });
     };
 
+    useEffect(()=> {
+        if(flash.message.success){
+            toast.success(flash.message.success);
+        }
+        if(flash.message.error){
+            toast.error(flash.message.error);
+        }
+    }, [flash]);
+
     return (
         <GuestLayout>
             <Head title="Log in" />
+            <ToastContainer />
 
             {status && (
                 <div className="mb-4 text-sm font-medium text-green-600">

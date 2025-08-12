@@ -1,6 +1,7 @@
 import React from "react";
 import NavLink from "@/Components/NavLink";
 import { LayoutDashboard } from "lucide-react";
+import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Sidebar({ isSidebarOpen, userRole }) {
   return (
@@ -11,9 +12,7 @@ export default function Sidebar({ isSidebarOpen, userRole }) {
     >
       {/* Header */}
       <div className="p-6 flex items-center gap-3 border-b border-gray-700">
-        <div className="bg-yellow-500 text-gray-900 font-bold w-10 h-10 flex items-center justify-center rounded-lg">
-          DP
-        </div>
+          <ApplicationLogo className="block h-9 w-auto fill-current text-blue-600" />
         <span className="text-lg font-semibold tracking-wide">
           Dashboard Panel
         </span>
