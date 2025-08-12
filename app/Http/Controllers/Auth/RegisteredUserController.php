@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Mail\WelcomeMahasiswaMail;
+use Illuminate\Support\Facades\Mail;
 
 class RegisteredUserController extends Controller
 {
@@ -72,6 +74,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+    Mail::to($user->email)->send(new WelcomeMahasiswaMail($user->name));
+    
     event(new Registered($user));
 
     return redirect()
