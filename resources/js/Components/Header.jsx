@@ -65,9 +65,13 @@ export default function Header({ onToggleSidebar, header, user }) {
                                     className="inline-flex items-center rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                                 >
                                     <img
-                                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`}
-                                        alt={user.name}
-                                        className="w-6 h-6 rounded-full mr-2"
+                                        src={
+                                            user?.mahasiswa_profile?.pas_foto
+                                                ? `/storage/${user.mahasiswa_profile.pas_foto}`
+                                                : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
+                                        }
+                                        alt="Avatar"
+                                        className="w-6 h-6 aspect-square rounded-full shadow-md object-cover flex-shrink-0 mr-1"
                                     />
                                     {user.name}
                                     <ChevronDown className="w-4 h-4 ml-1" />

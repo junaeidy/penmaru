@@ -1,5 +1,5 @@
 import MahasiswaLayout from '@/Layouts/MahasiswaLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import { ToastContainer, toast } from "react-toastify";
 import { useEffect } from 'react';
 
@@ -38,11 +38,13 @@ export default function Dashboard({ flash }) {
                         </p>
                     </div>
                     <img
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            user.name
-                        )}`}
+                        src={
+                            user?.mahasiswa_profile?.pas_foto
+                                ? `/storage/${user.mahasiswa_profile.pas_foto}`
+                                : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
+                        }
                         alt="Avatar"
-                        className="w-14 h-14 rounded-full shadow-md"
+                        className="w-14 h-14 aspect-square rounded-full shadow-md object-cover flex-shrink-0"
                     />
                 </div>
 
@@ -66,9 +68,9 @@ export default function Dashboard({ flash }) {
 
                 {/* Akses Cepat */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <a className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <Link href={route('mahasiswa.profile.create')} className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         Isi Biodata
-                    </a>
+                    </Link>
                     <a className="bg-green-500 text-white p-4 rounded-lg shadow hover:bg-green-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         Upload Berkas
                     </a>

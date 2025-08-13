@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
+use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 //MAHASISWA ROUTES
 Route::middleware(['auth', 'mahasiswa'])->group(function () {
     Route::get('/dashboard', [MahasiswaController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/profile', [MahasiswaProfileController::class, 'create'])
+        ->name('mahasiswa.profile.create');
+    Route::post('/dashboard/profile', [MahasiswaProfileController::class, 'store'])
+        ->name('mahasiswa.profile.store');
+    Route::get('/dashboard/profile/show', [MahasiswaProfileController::class, 'show'])
+        ->name('mahasiswa.profile.show');
 });
 
 require __DIR__.'/auth.php';
