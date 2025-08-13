@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\VerifikasiPendaftaranController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
 use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
 //ADMIN ROUTES
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/dashboard/verifikasi', [VerifikasiPendaftaranController::class, 'index'])->name('verifikasi.index');
+    Route::get('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'show'])->name('verifikasi.show');
+    Route::put('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'update'])->name('verifikasi.update');
 });
 
 //MAHASISWA ROUTES

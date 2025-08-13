@@ -50,7 +50,7 @@ return new class extends Migration
             $table->string('pas_foto');
 
             // Status pendaftaran
-            $table->enum('status_pendaftaran', ['draft', 'menunggu verifikasi', 'diterima', 'ditolak'])->default('draft');
+            $table->enum('status_pendaftaran', ['draft', 'menunggu verifikasi', 'diverifikasi', 'diterima', 'ditolak'])->default('draft');
             $table->text('catatan_perbaikan')->nullable();
 
             $table->timestamps();
