@@ -124,16 +124,18 @@ export default function Show({ profile }) {
                                 </select>
                             </div>
 
-                            <div>
-                                <label>Catatan Perbaikan:</label>
-                                <textarea
-                                    value={data.catatan_perbaikan}
-                                    onChange={(e) =>
-                                        setData("catatan_perbaikan", e.target.value)
-                                    }
-                                    className="border p-2 w-full rounded"
-                                />
-                            </div>
+                            {(data.status_pendaftaran === 'draft' || data.status_pendaftaran === 'ditolak') && (
+                                <div>
+                                    <label>Catatan Perbaikan:</label>
+                                    <textarea
+                                        value={data.catatan_perbaikan}
+                                        onChange={(e) =>
+                                            setData("catatan_perbaikan", e.target.value)
+                                        }
+                                        className="border p-2 w-full rounded"
+                                    />
+                                </div>
+                            )}
 
                             <PrimaryButton disabled={processing}>
                                 Simpan

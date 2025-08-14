@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Mail\ProfileSubmittedMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class MahasiswaProfileController extends Controller
 {
@@ -17,8 +18,12 @@ class MahasiswaProfileController extends Controller
         $profile = Auth::user()->mahasiswaProfile;
 
         // Jika sudah submit dan status menunggu verifikasi, arahkan ke view read-only
-        if ($profile && $profile->status_pendaftaran === 'menunggu verifikasi') {
+        if ($profile && $profile->status_pendaftaran === 'menunggu verifikasi' || 'diverifikasi') {
             return redirect()->route('mahasiswa.profile.show');
+        }
+
+        if ($profile && $profile->status_pendaftaran === 'draft') {
+            return redirect()->route('mahasiswa.profile.edit');
         }
 
         return inertia('Mahasiswa/ProfileForm', [
@@ -119,10 +124,10 @@ class MahasiswaProfileController extends Controller
         }
 
         if (!in_array($profile->status_pendaftaran, ['draft', 'perlu perbaikan'])) {
-            return redirect()->route('mahasiswa.profile.show');
+            return redirect()->route('mahasiswa.profile.edit');
         }
 
-        return inertia('Mahasiswa/ProfileForm', [
+        return inertia('Mahasiswa/ProfileEdit', [
             'profile' => $profile
         ]);
     }
@@ -168,11 +173,16 @@ class MahasiswaProfileController extends Controller
             'foto_kk' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'ijazah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'skhu' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'pas_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:1024',
+            'pas_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ], [
             'required' => 'Kolom :attribute wajib diisi.',
             'string' => 'Kolom :attribute harus berupa teks.',
-            'max' => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
+            'max' => [
+                'numeric' => 'Kolom :attribute tidak boleh lebih dari :max.',
+                'file'    => 'Kolom :attribute tidak boleh lebih dari :max kilobyte.',
+                'string'  => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
+                'array'   => 'Kolom :attribute tidak boleh memiliki lebih dari :max item.',
+            ],
             'in' => 'Pilihan untuk :attribute tidak valid.',
             'date' => 'Kolom :attribute harus berupa tanggal yang valid.',
             'digits' => 'Kolom :attribute harus berupa :digits digit.',
@@ -183,7 +193,12 @@ class MahasiswaProfileController extends Controller
 
         foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto'] as $field) {
             if ($request->hasFile($field)) {
+                if ($profile->$field && Storage::disk('public')->exists($profile->$field)) {
+                    Storage::disk('public')->delete($profile->$field);
+                }
                 $validated[$field] = $request->file($field)->store('berkas', 'public');
+            } else {
+                $validated[$field] = $profile->$field;
             }
         }
 
@@ -195,4 +210,5 @@ class MahasiswaProfileController extends Controller
         return redirect()->route('mahasiswa.profile.show')
             ->with(['success' => 'Data berhasil diperbarui dan menunggu verifikasi admin.']);
     }
+
 }

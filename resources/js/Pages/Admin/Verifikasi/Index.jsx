@@ -45,6 +45,8 @@ export default function Index({ profiles, flash, filters }) {
 
     const getStatusBadge = (status) => {
         switch (status) {
+            case 'diverifikasi':
+                return <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">Diverifikasi</span>;
             case 'menunggu verifikasi':
                 return <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Menunggu Verifikasi</span>;
             case 'diterima':

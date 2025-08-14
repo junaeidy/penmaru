@@ -1,6 +1,6 @@
 import React from "react";
 import NavLink from "@/Components/NavLink";
-import { LayoutDashboard, User } from "lucide-react";
+import { LayoutDashboard, User, FilePen } from "lucide-react";
 import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Sidebar({ isSidebarOpen, userRole }) {
@@ -32,7 +32,7 @@ export default function Sidebar({ isSidebarOpen, userRole }) {
             </NavLink>
             <NavLink
               href={route("verifikasi.index")}
-              active={route().current("verifikasi.index")}
+              active={route().current("verifikasi.*")}
               icon={<User className="w-5 h-5" />}
               className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
@@ -50,6 +50,14 @@ export default function Sidebar({ isSidebarOpen, userRole }) {
               className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Dashboard
+            </NavLink>
+            <NavLink
+              href={route("mahasiswa.profile.create")}
+              active={route().current("mahasiswa.profile.*")}
+              icon={<FilePen className="w-5 h-5" />}
+              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
+            >
+              Formulir Data Diri
             </NavLink>
           </>
         )}

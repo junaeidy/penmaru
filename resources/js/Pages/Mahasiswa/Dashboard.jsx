@@ -2,6 +2,13 @@ import MahasiswaLayout from '@/Layouts/MahasiswaLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { ToastContainer, toast } from "react-toastify";
 import { useEffect } from 'react';
+import {
+    Edit3,
+    Clock,
+    CheckCircle2,
+    FileCheck,
+    HelpCircle,
+} from "lucide-react";
 
 export default function Dashboard({ flash }) {
     const user = usePage().props.auth.user;
@@ -56,6 +63,51 @@ export default function Dashboard({ flash }) {
                     </div>
                     <p className="mt-2 text-gray-500 text-sm">2 dari 4 tahap telah selesai</p>
                 </div>
+                <section className="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h2 className="text-lg font-bold mb-2">Status Pendaftaran</h2>
+                    <div
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-full capitalize text-white ${
+                            user?.mahasiswa_profile?.status_pendaftaran === "draft"
+                                ? "bg-red-500"
+                                : user?.mahasiswa_profile?.status_pendaftaran === "menunggu verifikasi"
+                                ? "bg-yellow-500"
+                                : user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
+                                ? "bg-blue-500"
+                                : user?.mahasiswa_profile?.status_pendaftaran === "diterima"
+                                ? "bg-green-500"
+                                : "bg-gray-500"
+                        }`}
+                    >
+                        {user?.mahasiswa_profile?.status_pendaftaran === "draft" && (
+                            <Edit3 size={18} />
+                        )}
+                        {user?.mahasiswa_profile?.status_pendaftaran === "menunggu verifikasi" && (
+                            <Clock size={18} />
+                        )}
+                        {user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi" && (
+                            <FileCheck size={18} />
+                        )}
+                        {user?.mahasiswa_profile?.status_pendaftaran === "diterima" && (
+                            <CheckCircle2 size={18} />
+                        )}
+                        {!user?.mahasiswa_profile?.status_pendaftaran && <HelpCircle size={18} />}
+                        
+                        {user?.mahasiswa_profile?.status_pendaftaran || "Belum Mengisi Data"}
+                    </div>
+
+                    {user?.mahasiswa_profile?.catatan_perbaikan && user?.mahasiswa_profile?.status_pendaftaran === "draft" && (
+                        <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800">
+                            <strong>Catatan Perbaikan:</strong>
+                            <p>{user?.mahasiswa_profile?.catatan_perbaikan}</p>
+                        </div>
+                    )}
+                    {user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi" && (
+                        <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-600">
+                            <strong>Catatan :</strong>
+                            <p>Silahkan melakukan pembayaran untuk melanjutkan proses pendaftaran</p>
+                        </div>
+                    )}
+                </section>
 
                 {/* Pengumuman */}
                 <div className="bg-white p-6 rounded-xl shadow-sm">
@@ -67,13 +119,42 @@ export default function Dashboard({ flash }) {
                 </div>
 
                 {/* Akses Cepat */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <Link href={route('mahasiswa.profile.create')} className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        Isi Biodata
-                    </Link>
-                    <a className="bg-green-500 text-white p-4 rounded-lg shadow hover:bg-green-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        Upload Berkas
-                    </a>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    {!user.mahasiswa_profile && (
+                        <Link
+                            href={route('mahasiswa.profile.create')}
+                            className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        >
+                            Isi Data Diri
+                        </Link>
+                    )}
+
+                    {user.mahasiswa_profile?.status_pendaftaran === 'draft' && (
+                        <Link
+                            href={route('mahasiswa.profile.edit')}
+                            className="bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        >
+                            Perbaiki Data Diri
+                        </Link>
+                    )}
+
+                    {user.mahasiswa_profile?.status_pendaftaran === 'menunggu verifikasi' && (
+                        <Link
+                            href={route('mahasiswa.profile.show')}
+                            className="bg-gray-500 text-white p-4 rounded-lg shadow hover:bg-gray-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        >
+                            Lihat Data Diri
+                        </Link>
+                    )}
+
+                    {user.mahasiswa_profile?.status_pendaftaran === 'diverifikasi' && (
+                        <Link
+                            href={route('mahasiswa.profile.show')}
+                            className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        >
+                            Lihat Data Diri
+                        </Link>
+                    )}
                     <a className="bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         Pembayaran
                     </a>

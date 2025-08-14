@@ -41,6 +41,11 @@ Route::middleware(['auth', 'mahasiswa'])->group(function () {
         ->name('mahasiswa.profile.store');
     Route::get('/dashboard/profile/show', [MahasiswaProfileController::class, 'show'])
         ->name('mahasiswa.profile.show');
+    Route::get('/dashboard/profile/edit', [MahasiswaProfileController::class, 'edit'])
+        ->name('mahasiswa.profile.edit');
+    Route::post('/dashboard/profile/edit', [MahasiswaProfileController::class, 'update'])
+        ->name('mahasiswa.profile.update');
+    Route::put('/dashboard/profile/edit', [MahasiswaProfileController::class, 'update']);
 });
 
 require __DIR__.'/auth.php';
