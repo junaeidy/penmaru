@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\VerifikasiPendaftaranController;
+use App\Http\Controllers\Admin\FakultasController;
+use App\Http\Controllers\Admin\ProgramStudiController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
 use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
 use App\Http\Controllers\ProfileController;
@@ -30,6 +32,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard/verifikasi', [VerifikasiPendaftaranController::class, 'index'])->name('verifikasi.index');
     Route::get('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'show'])->name('verifikasi.show');
     Route::put('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'update'])->name('verifikasi.update');
+    Route::resource('/admin/dashboard/fakultas', FakultasController::class)->name('index', 'admin.fakultas.index')
+        ->name('store', 'admin.fakultas.store')
+        ->name('update', 'admin.fakultas.update')
+        ->name('destroy', 'admin.fakultas.destroy');
+    Route::resource('/admin/dashboard/program-studi', ProgramStudiController::class)->name('index', 'admin.program-studi.index')
+        ->name('store', 'admin.program-studi.store')
+        ->name('update', 'admin.program-studi.update')
+        ->name('destroy', 'admin.program-studi.destroy');
 });
 
 //MAHASISWA ROUTES

@@ -165,27 +165,27 @@ export default function ProfileForm({ auth, profile }) {
     };
 
    const submit = (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const payload = {
-        ...data,
-        penghasilan_ayah: String(unformatRupiah(data.penghasilan_ayah)),
-        penghasilan_ibu: String(unformatRupiah(data.penghasilan_ibu)),
-        _method: 'PUT',
+        const payload = {
+            ...data,
+            penghasilan_ayah: String(unformatRupiah(data.penghasilan_ayah)),
+            penghasilan_ibu: String(unformatRupiah(data.penghasilan_ibu)),
+            _method: 'PUT',
+        };
+        post(route('mahasiswa.profile.update'), {
+            ...payload,
+            _method: 'PUT',
+        }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onError: (errors) => {
+                Object.values(errors).forEach(error => {
+                    toast.error(error);
+                });
+            }
+        });
     };
-    post(route('mahasiswa.profile.update'), {
-        ...payload,
-        _method: 'PUT',
-    }, {
-        forceFormData: true,
-        preserveScroll: true,
-        onError: (errors) => {
-            Object.values(errors).forEach(error => {
-                toast.error(error);
-            });
-        }
-    });
-};a
     return (
         <MahasiswaLayout header={"Profile Form Mahasiswa"}>
             <Head title="Profile Form" />

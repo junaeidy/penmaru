@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import NavLink from "@/Components/NavLink";
-import { LayoutDashboard, User, FilePen } from "lucide-react";
+import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen } from "lucide-react";
 import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Sidebar({ isSidebarOpen, userRole }) {
+  const [open, setOpen] = useState(false);
+
+  const isJurusanMenuOpen = route().current('admin.fakultas.*') || route().current('admin.program-studi.*');
+    useEffect(() => {
+      if (isJurusanMenuOpen) {
+        setOpen(true);
+      }
+    }, [isJurusanMenuOpen]);
+
   return (
     <div
       className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-gray-200 transform ${
@@ -34,10 +43,51 @@ export default function Sidebar({ isSidebarOpen, userRole }) {
               href={route("verifikasi.index")}
               active={route().current("verifikasi.*")}
               icon={<User className="w-5 h-5" />}
-              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
+              className="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Calon Mahasiswa
             </NavLink>
+            <div>
+            {/* Menu Utama */}
+            <button
+                onClick={() => setOpen(!open)}
+                  className={`flex items-center justify-between w-full px-4 py-2 rounded-lg transition-colors duration-200 ${
+                      open || isJurusanMenuOpen
+                          ? "bg-gray-800 text-white"
+                          : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                  }`}
+            >
+                <span className="flex items-center gap-3">
+                    <GraduationCap className="w-5 h-5" />
+                    Manajemen Jurusan
+                </span>
+                <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                />
+            </button>
+
+            {/* Submenu */}
+            {open && (
+                <div className="ml-8 mt-1 flex flex-col gap-1">
+                    <NavLink
+                        href={route('admin.fakultas.index')}
+                        active={route().current('admin.fakultas.*')}
+                        className="px-3 py-1.5 rounded hover:bg-gray-600 hover:text-white transition"
+                    >
+                        <Building className="w-4 h-4 mr-1" />
+                        Fakultas
+                    </NavLink>
+                    <NavLink
+                        href={route('admin.program-studi.index')}
+                        active={route().current('admin.program-studi.*')}
+                        className="px-3 py-1.5 rounded hover:bg-gray-600 hover:text-white transition"
+                    >
+                        <BookOpen className="w-4 h-4 mr-1" />
+                        Program Studi
+                    </NavLink>
+                </div>
+            )}
+        </div>
           </>
         )}
 
