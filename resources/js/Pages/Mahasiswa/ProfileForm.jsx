@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
@@ -29,7 +29,7 @@ const unformatRupiah = (rupiah) => {
 };
 
 
-export default function ProfileForm({ auth }) {
+export default function ProfileForm({ auth, fakultas, programStudis }) {
     const steps = [
         "Data Diri Mahasiswa",
         "Data Orang Tua / Wali",
@@ -49,6 +49,8 @@ export default function ProfileForm({ auth }) {
         no_hp: "",
         status_perkawinan: "",
         kewarganegaraan: "",
+        fakultas_id: "",
+        program_studi_id: "",
 
         // Step 2
         nama_ayah: "",
@@ -74,6 +76,21 @@ export default function ProfileForm({ auth }) {
         skhu: null,
         pas_foto: null,
     });
+    
+    const [filteredProgramStudis, setFilteredProgramStudis] = useState([]);
+    useEffect(() => {
+        if (data.fakultas_id) {
+            const filtered = programStudis.filter(
+            (ps) => ps.fakultas_id == data.fakultas_id
+            );
+            setFilteredProgramStudis(filtered);
+            if (!filtered.some(ps => ps.id == data.program_studi_id)) {
+                setData("program_studi_id", "");
+            }
+        } else {
+            setFilteredProgramStudis([]);
+        }
+    }, [data.fakultas_id, programStudis]);
 
     const [previews, setPreviews] = useState({});
 
@@ -128,6 +145,19 @@ export default function ProfileForm({ auth }) {
 
     const prevStep = () => setCurrentStep((prev) => prev - 1);
 
+    const isStepComplete = (stepIndex) => {
+    const fields = stepFields[stepIndex];
+        if (!fields) return false;
+
+        return fields.every(field => {
+            const value = data[field];
+            if (field.startsWith('foto_') || field === 'ijazah' || field === 'skhu' || field === 'pas_foto') {
+                return value !== null;
+            }
+            return value && value.toString().trim() !== "";
+        });
+    };
+
     const submitForm = (e) => {
         e.preventDefault();
         if (!validateStep()) return;
@@ -166,6 +196,40 @@ export default function ProfileForm({ auth }) {
             case 0:
                 return (
                     <>
+                        <div className="mt-4">
+                            <InputLabel value="Fakultas" />
+                            <select
+                            value={data.fakultas_id}
+                            onChange={(e) => setData("fakultas_id", e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            >
+                            <option value="">Pilih Fakultas...</option>
+                            {fakultas.map((f) => (
+                                <option key={f.id} value={f.id}>
+                                {f.nama}
+                                </option>
+                            ))}
+                            </select>
+                            <InputError message={errors.fakultas_id} className="mt-2" />
+                        </div>
+
+                        <div className="mt-4">
+                            <InputLabel value="Program Studi" />
+                            <select
+                            value={data.program_studi_id}
+                            onChange={(e) => setData("program_studi_id", e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            disabled={!data.fakultas_id}
+                            >
+                            <option value="">Pilih Program Studi...</option>
+                            {filteredProgramStudis.map((ps) => (
+                                <option key={ps.id} value={ps.id}>
+                                {ps.nama}
+                                </option>
+                            ))}
+                            </select>
+                            <InputError message={errors.program_studi_id} className="mt-2" />
+                        </div>
                         <div className="mt-4">
                             <InputLabel value="Jenis Kelamin" />
                             <div className="mt-2 flex space-x-4">
@@ -419,23 +483,31 @@ export default function ProfileForm({ auth }) {
                 <form onSubmit={submitForm}>
                     {renderStepFields()}
                     <div className="flex justify-between mt-8">
-                        {currentStep > 0 && (
-                            <PrimaryButton type="button" onClick={prevStep} className="bg-gray-500 hover:bg-gray-600">
-                                <ArrowLeft size={16} className="mr-2" /> Sebelumnya
-                            </PrimaryButton>
-                        )}
-                        <div className="ml-auto">
-                            {currentStep < steps.length - 1 ? (
-                                <PrimaryButton type="button" onClick={nextStep}>
-                                    Selanjutnya <ArrowRight size={16} className="ml-2" />
-                                </PrimaryButton>
-                            ) : (
-                                <PrimaryButton type="submit" disabled={processing} className="bg-green-500 hover:bg-green-600">
-                                    Simpan
-                                </PrimaryButton>
-                            )}
-                        </div>
-                    </div>
+    {currentStep > 0 && (
+        <PrimaryButton type="button" onClick={prevStep} className="bg-gray-500 hover:bg-gray-600">
+            <ArrowLeft size={16} className="mr-2" /> Sebelumnya
+        </PrimaryButton>
+    )}
+    <div className="ml-auto">
+        {currentStep < steps.length - 1 ? (
+            <PrimaryButton 
+                type="button" 
+                onClick={nextStep} 
+                disabled={!isStepComplete(currentStep)}
+            >
+                Selanjutnya <ArrowRight size={16} className="ml-2" />
+            </PrimaryButton>
+        ) : (
+            <PrimaryButton 
+                type="submit" 
+                disabled={processing || !isStepComplete(currentStep)} 
+                className="bg-green-500 hover:bg-green-600"
+            >
+                Simpan
+            </PrimaryButton>
+        )}
+    </div>
+</div>
                 </form>
             </div>
         </MahasiswaLayout>

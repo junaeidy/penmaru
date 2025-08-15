@@ -10,6 +10,8 @@ use Inertia\Inertia;
 use App\Mail\ProfileSubmittedMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Fakultas;
+use App\Models\ProgramStudi;
 
 class MahasiswaProfileController extends Controller
 {
@@ -17,8 +19,7 @@ class MahasiswaProfileController extends Controller
     {
         $profile = Auth::user()->mahasiswaProfile;
 
-        // Jika sudah submit dan status menunggu verifikasi, arahkan ke view read-only
-        if ($profile && $profile->status_pendaftaran === 'menunggu verifikasi' || 'diverifikasi') {
+        if ($profile && in_array($profile->status_pendaftaran, ['menunggu verifikasi', 'diverifikasi'])) {
             return redirect()->route('mahasiswa.profile.show');
         }
 
@@ -27,7 +28,9 @@ class MahasiswaProfileController extends Controller
         }
 
         return inertia('Mahasiswa/ProfileForm', [
-            'profile' => $profile
+            'profile' => $profile,
+            'fakultas' => Fakultas::all(),
+            'programStudis' => ProgramStudi::all()
         ]);
     }
 
@@ -63,6 +66,10 @@ class MahasiswaProfileController extends Controller
             'jurusan' => 'required|string|max:100',
             'tahun_lulus' => 'required|digits:4',
 
+            // Fakultas & Program Studi
+            'fakultas_id' => 'required|exists:fakultas,id',
+            'program_studi_id' => 'required|exists:program_studis,id',
+
             // Berkas
             'foto_ktp' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'foto_kk' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -79,6 +86,7 @@ class MahasiswaProfileController extends Controller
             'file' => 'Kolom :attribute harus berupa file.',
             'mimes' => 'File :attribute harus memiliki format :values.',
             'regex' => 'Format :attribute tidak valid.',
+            'exists' => 'Kolom :attribute tidak valid.',
         ]);
 
         // Upload file
@@ -104,31 +112,38 @@ class MahasiswaProfileController extends Controller
 
     public function show()
     {
-        $profile = Auth::user()->mahasiswaProfile;
+        $profile = Auth::user()->mahasiswaProfile()->with(['fakultas', 'programStudi'])->first();
 
         if (!$profile) {
             return redirect()->route('mahasiswa.profile.create');
         }
 
         return inertia('Mahasiswa/ProfileShow', [
-            'profile' => $profile
+            'profile' => $profile,
+            'fakultas' => Fakultas::all(),
+            'programStudis' => ProgramStudi::all()
         ]);
     }
 
     public function edit()
     {
-        $profile = Auth::user()->mahasiswaProfile;
+        $profile = Auth::user()
+            ->mahasiswaProfile()
+            ->with(['fakultas', 'programStudi'])
+            ->first();
 
         if (!$profile) {
             return redirect()->route('mahasiswa.profile.create');
         }
 
         if (!in_array($profile->status_pendaftaran, ['draft', 'perlu perbaikan'])) {
-            return redirect()->route('mahasiswa.profile.edit');
+            return redirect()->route('mahasiswa.profile.show');
         }
 
         return inertia('Mahasiswa/ProfileEdit', [
-            'profile' => $profile
+            'profile' => $profile,
+            'fakultas' => Fakultas::all(),
+            'programStudis' => ProgramStudi::all()
         ]);
     }
 
@@ -189,6 +204,7 @@ class MahasiswaProfileController extends Controller
             'file' => 'Kolom :attribute harus berupa file.',
             'mimes' => 'File :attribute harus memiliki format :values.',
             'regex' => 'Format :attribute tidak valid.',
+            'exists' => 'Kolom :attribute tidak valid.',
         ]);
 
         foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto'] as $field) {

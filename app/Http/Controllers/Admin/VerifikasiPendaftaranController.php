@@ -41,9 +41,13 @@ class VerifikasiPendaftaranController extends Controller
         ]);
     }
 
-    public function show($id)
+   public function show($id)
     {
-        $profile = MahasiswaProfile::with('user')->findOrFail($id);
+        $profile = MahasiswaProfile::with([
+            'user',
+            'fakultas',
+            'programStudi'
+        ])->findOrFail($id);
 
         return inertia('Admin/Verifikasi/Show', [
             'profile' => $profile

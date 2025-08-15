@@ -7,6 +7,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import { Trash2 } from "lucide-react";
 import MahasiswaLayout from "@/Layouts/MahasiswaLayout";
 import { ToastContainer, toast } from "react-toastify";
+import ReadOnly from "@/Components/Partials/ReadOnly";
 
 const formatRupiah = (angka) => {
     let number_string = angka.replace(/[^,\d]/g, "").toString();
@@ -127,6 +128,8 @@ export default function ProfileForm({ auth, profile }) {
         nama_sekolah: profile.nama_sekolah || "",
         jurusan: profile.jurusan || "",
         tahun_lulus: profile.tahun_lulus || "",
+        fakultas_id: profile?.fakultas || "",
+        program_studi_id: profile?.program_studi || "",
         foto_ktp: null,
         foto_kk: null,
         ijazah: null,
@@ -192,6 +195,33 @@ export default function ProfileForm({ auth, profile }) {
             <ToastContainer />
             <div className="max-w-6xl mx-auto p-4 sm:p-8 bg-gray-50 dark:bg-gray-800 shadow-xl rounded-2xl">
                 <form onSubmit={submit} className="space-y-8" encType="multipart/form-data">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 border-b-2 border-indigo-500 pb-2">
+                            Data Jurusan
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="md:col-span-1 lg:col-span-1">
+                                <ReadOnly label="Fakultas" value={profile?.fakultas?.nama || '-'} />
+                            </div>
+                            <div className="md:col-span-1 lg:col-span-1">
+                                <ReadOnly label="Program Studi" value={profile?.program_studi?.nama || '-'} />
+                            </div>
+                            <div className="md:col-span-1 lg:col-span-1">
+                                <ReadOnly
+                                    label="Tanggal Daftar"
+                                    value={
+                                        profile?.created_at
+                                            ? new Date(profile.created_at).toLocaleDateString("id-ID", {
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })
+                                            : "-"
+                                        }
+                                />
+                            </div>
+                        </div>
+                    </div>
                     <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 border-b-2 border-indigo-500 pb-2">
                             Data Diri Mahasiswa

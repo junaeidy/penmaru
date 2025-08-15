@@ -32,6 +32,9 @@ class MahasiswaProfile extends Model
         'jurusan',
         'tahun_lulus',
 
+        'fakultas_id',
+        'program_studi_id',
+
         'foto_ktp',
         'foto_kk',
         'ijazah',
@@ -44,5 +47,15 @@ class MahasiswaProfile extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function fakultas()
+    {
+        return $this->belongsTo(Fakultas::class);
+    }
+
+    public function programStudi()
+    {
+        return $this->belongsTo(ProgramStudi::class);
     }
 }

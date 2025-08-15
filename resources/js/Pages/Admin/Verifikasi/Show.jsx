@@ -8,7 +8,7 @@ import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { ToastContainer, toast } from 'react-toastify';
 
-export default function Show({ profile }) {
+export default function Show({ profile, fakultas, programStudi }) {
     const [modalImage, setModalImage] = useState(null);
     const openModal = (img) => setModalImage(img);
     const closeModal = () => setModalImage(null);
@@ -44,6 +44,27 @@ export default function Show({ profile }) {
                         Kembali
                     </PrimaryButton>
                 </Link>
+
+                {/* Jurusan */}
+                <section className="bg-white p-6 rounded-lg shadow-md">
+                    <h3 className="text-xl font-bold mb-4 border-b-2 pb-2 text-indigo-700">Jurusan yang diambil</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <ReadOnly label="Fakultas" value={profile?.fakultas?.nama} />
+                        <ReadOnly label="Program Studi" value={profile?.program_studi?.nama} />
+                        <ReadOnly
+                            label="Tanggal Daftar"
+                            value={
+                                profile?.created_at
+                                    ? new Date(profile.created_at).toLocaleDateString("id-ID", {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                    })
+                                    : "-"
+                            }
+                        />
+                    </div>
+                </section>
 
                 {/* Data Diri */}
                 <section className="bg-white p-6 rounded-lg shadow-md">
