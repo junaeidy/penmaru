@@ -25,8 +25,8 @@ class VerifikasiPendaftaranController extends Controller
         if ($search) {
             $profilesQuery->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%')
-                    ->orWhere('nik', 'like', '%' . $search . '%');
+                    ->orWhere('nik', 'like', '%' . $search . '%')
+                    ->orWhere('nomor_pendaftaran', 'like', '%' . $search . '%');
             });
         }
 

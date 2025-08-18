@@ -80,6 +80,6 @@ class RegisteredUserController extends Controller
 
     return redirect()
         ->route('login')
-        ->with(['success'=> 'Pendaftaran berhasil! Silakan login menggunakan akun Anda.']);
+        ->with(['success'=> 'Pendaftaran berhasil! Silakan verifikasi email anda untuk menggunakan akun Anda.']);
     }
 }

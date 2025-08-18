@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MahasiswaProfile extends Model
 {
     protected $fillable = [
+        'nomor_pendaftaran',
         'user_id',
         'jenis_kelamin',
         'tempat_lahir',
@@ -40,6 +41,7 @@ class MahasiswaProfile extends Model
         'ijazah',
         'skhu',
         'pas_foto',
+        'bukti_pembayaran',
 
         'status_pendaftaran',
     ];
@@ -58,4 +60,14 @@ class MahasiswaProfile extends Model
     {
         return $this->belongsTo(ProgramStudi::class);
     }
+
+    public static function generateNomorPendaftaran()
+    {
+        do {
+            $number = str_pad(mt_rand(0, 99999999), 8, '0', STR_PAD_LEFT);
+        } while (self::where('nomor_pendaftaran', $number)->exists());
+
+        return $number;
+    }
+
 }

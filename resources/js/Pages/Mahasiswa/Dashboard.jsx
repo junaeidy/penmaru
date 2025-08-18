@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import MahasiswaLayout from '@/Layouts/MahasiswaLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { ToastContainer, toast } from "react-toastify";
@@ -8,10 +9,24 @@ import {
     CheckCircle2,
     FileCheck,
     HelpCircle,
+    Banknote,
 } from "lucide-react";
+import Modal from '@/Components/Modal';
 
 export default function Dashboard({ flash }) {
     const user = usePage().props.auth.user;
+
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
+
+    const dataPembayaran = {
+        namaRekening: "Universitas XYZ",
+        nomorRekening: "1234567890",
+        bank: "Bank ABC",
+    };
+
     useEffect(()=> {
         if(flash.message.success){
             toast.success(flash.message.success);
@@ -104,7 +119,7 @@ export default function Dashboard({ flash }) {
                     {user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi" && (
                         <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-600">
                             <strong>Catatan :</strong>
-                            <p>Silahkan melakukan pembayaran untuk melanjutkan proses pendaftaran</p>
+                            <p>Silakan menunggu informasi lebih lanjut terkait test ujian online</p>
                         </div>
                     )}
                 </section>
@@ -155,13 +170,50 @@ export default function Dashboard({ flash }) {
                             Lihat Data Diri
                         </Link>
                     )}
-                    <a className="bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        Pembayaran
+                    <a
+                        onClick={handleOpenModal}
+                        className="bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                        <Banknote size={20} />
+                        <span>Pembayaran</span>
                     </a>
                     <a className="bg-purple-500 text-white p-4 rounded-lg shadow hover:bg-purple-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         Ujian Online
                     </a>
                 </div>
+                <Modal show={showModal} onClose={handleCloseModal}>
+                    <div className="p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Informasi Pembayaran</h3>
+                        <p className="text-gray-700 mb-2">
+                            Silakan lakukan pembayaran ke rekening berikut:
+                        </p>
+                        <div className="bg-gray-100 p-4 rounded-lg mb-4">
+                            <div className="mb-2">
+                                <p className="text-sm text-gray-500">Nama Rekening:</p>
+                                <p className="font-medium text-gray-800">{dataPembayaran.namaRekening}</p>
+                            </div>
+                            <div className="mb-2">
+                                <p className="text-sm text-gray-500">Nomor Rekening:</p>
+                                <p className="font-medium text-gray-800">{dataPembayaran.nomorRekening}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Bank:</p>
+                                <p className="font-medium text-gray-800">{dataPembayaran.bank}</p>
+                            </div>
+                        </div>
+
+                        {/* Tombol Tutup */}
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                                onClick={handleCloseModal}
+                            >
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </Modal>
             </div>
         </MahasiswaLayout>
     );

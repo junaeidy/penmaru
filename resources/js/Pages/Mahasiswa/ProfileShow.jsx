@@ -49,8 +49,7 @@ export default function ProfileShow({ auth, profile, flash }) {
                     <section className="bg-white p-6 rounded-lg shadow-md">
                         <h3 className="text-xl font-bold mb-4 border-b-2 pb-2 text-indigo-700">Jurusan yang diambil</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <ReadOnly label="Fakultas" value={profile?.fakultas?.nama} />
-                            <ReadOnly label="Program Studi" value={profile?.program_studi?.nama} />
+                            <ReadOnly label="Nomor Registrasi" value={profile.nomor_pendaftaran} />
                             <ReadOnly
                                 label="Tanggal Daftar"
                                 value={
@@ -63,6 +62,8 @@ export default function ProfileShow({ auth, profile, flash }) {
                                         : "-"
                                 }
                             />
+                            <ReadOnly label="Fakultas" value={profile?.fakultas?.nama} />
+                            <ReadOnly label="Program Studi" value={profile?.program_studi?.nama} />
                         </div>
                     </section>
 
@@ -81,7 +82,6 @@ export default function ProfileShow({ auth, profile, flash }) {
                             <ReadOnly label="Email" value={auth.user.email} />
                             <ReadOnly label="Status Perkawinan" value={profile.status_perkawinan} />
                             <ReadOnly label="Kewarganegaraan" value={profile.kewarganegaraan} />
-                            <ReadOnly label="Fakultas" value={profile.kewarganegaraan} />
                         </div>
                     </section>
 
@@ -121,6 +121,7 @@ export default function ProfileShow({ auth, profile, flash }) {
                             <FilePreview label="Ijazah" url={profile.ijazah} onClick={() => openModal(profile.ijazah)} />
                             <FilePreview label="SKHU / SKL" url={profile.skhu} onClick={() => openModal(profile.skhu)} />
                             <FilePreview label="Pas Foto" url={profile.pas_foto} onClick={() => openModal(profile.pas_foto)} />
+                            <FilePreview label="Bukti Pembayaran" url={profile.bukti_pembayaran} onClick={() => openModal(profile.bukti_pembayaran)} />
                         </div>
                     </section>
                 </div>

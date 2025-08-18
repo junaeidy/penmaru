@@ -43,7 +43,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 //MAHASISWA ROUTES
-Route::middleware(['auth', 'mahasiswa'])->group(function () {
+Route::middleware(['auth', 'mahasiswa', 'verified'])->group(function () {
     Route::get('/dashboard', [MahasiswaController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/profile', [MahasiswaProfileController::class, 'create'])
         ->name('mahasiswa.profile.create');

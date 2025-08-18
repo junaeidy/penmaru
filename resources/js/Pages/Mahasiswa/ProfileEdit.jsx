@@ -104,6 +104,7 @@ export default function ProfileForm({ auth, profile }) {
         ijazah: profile.ijazah ? `/storage/${profile.ijazah}` : null,
         skhu: profile.skhu ? `/storage/${profile.skhu}` : null,
         pas_foto: profile.pas_foto ? `/storage/${profile.pas_foto}` : null,
+        bukti_pembayaran: profile.bukti_pembayaran ? `/storage/${profile.bukti_pembayaran}` : null,
     };
 
     const { data, setData, post, processing, errors } = useForm({
@@ -135,6 +136,7 @@ export default function ProfileForm({ auth, profile }) {
         ijazah: null,
         skhu: null,
         pas_foto: null,
+        bukti_pembayaran: null,
     });
 
     const [previews, setPreviews] = useState(initialPreviews);
@@ -428,7 +430,7 @@ export default function ProfileForm({ auth, profile }) {
                             Berkas Calon Mahasiswa
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {["foto_ktp", "foto_kk", "ijazah", "skhu", "pas_foto"].map((field) => (
+                            {["foto_ktp", "foto_kk", "ijazah", "skhu", "pas_foto", "bukti_pembayaran"].map((field) => (
                                 <FileUploader
                                     key={field}
                                     label={field.replace(/_/g, " ").toUpperCase()}

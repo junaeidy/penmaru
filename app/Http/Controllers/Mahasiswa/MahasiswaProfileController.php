@@ -76,10 +76,16 @@ class MahasiswaProfileController extends Controller
             'ijazah' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'skhu' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'pas_foto' => 'required|file|mimes:jpg,jpeg,png|max:1024',
+            'bukti_pembayaran' => 'required|file|mimes:jpg,jpeg,png|max:1024',
         ], [
             'required' => 'Kolom :attribute wajib diisi.',
             'string' => 'Kolom :attribute harus berupa teks.',
-            'max' => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
+            'max' => [
+                'numeric' => 'Kolom :attribute tidak boleh lebih dari :max.',
+                'file'    => 'Kolom :attribute tidak boleh lebih dari :max kilobyte.',
+                'string'  => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
+                'array'   => 'Kolom :attribute tidak boleh memiliki lebih dari :max item.',
+            ],
             'in' => 'Pilihan untuk :attribute tidak valid.',
             'date' => 'Kolom :attribute harus berupa tanggal yang valid.',
             'digits' => 'Kolom :attribute harus berupa :digits digit.',
@@ -90,17 +96,24 @@ class MahasiswaProfileController extends Controller
         ]);
 
         // Upload file
-        foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto'] as $field) {
+        foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto', 'bukti_pembayaran'] as $field) {
             if ($request->hasFile($field)) {
                 $validated[$field] = $request->file($field)->store('berkas', 'public');
             }
         }
 
+        $profile = MahasiswaProfile::where('user_id', $user->id)->first();
+
+        $nomorRegistrasi = $profile && $profile->nomor_registrasi
+            ? $profile->nomor_registrasi
+            : MahasiswaProfile::generateNomorPendaftaran();
+
         // Simpan data
         MahasiswaProfile::updateOrCreate(
             ['user_id' => $user->id],
             array_merge($validated, [
-                'status_pendaftaran' => 'menunggu verifikasi'
+                'status_pendaftaran' => 'menunggu verifikasi',
+                'nomor_pendaftaran'   => $nomorRegistrasi,
             ])
         );
 
@@ -189,6 +202,7 @@ class MahasiswaProfileController extends Controller
             'ijazah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'skhu' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'pas_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'bukti_pembayaran' => 'nullable|file|mimes:jpg,jpeg,png|max:1024',
         ], [
             'required' => 'Kolom :attribute wajib diisi.',
             'string' => 'Kolom :attribute harus berupa teks.',
@@ -207,7 +221,7 @@ class MahasiswaProfileController extends Controller
             'exists' => 'Kolom :attribute tidak valid.',
         ]);
 
-        foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto'] as $field) {
+        foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto', 'bukti_pembayaran'] as $field) {
             if ($request->hasFile($field)) {
                 if ($profile->$field && Storage::disk('public')->exists($profile->$field)) {
                     Storage::disk('public')->delete($profile->$field);

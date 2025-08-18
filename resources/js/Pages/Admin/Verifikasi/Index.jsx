@@ -90,7 +90,7 @@ export default function Index({ profiles, flash, filters }) {
                                     type="text"
                                     value={search}
                                     onChange={handleSearchChange}
-                                    placeholder="Cari NIK, nama, atau email..."
+                                    placeholder="Cari Nomor Registrasi, NIK, atau nama..."
                                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 />
                             </form>
@@ -101,6 +101,7 @@ export default function Index({ profiles, flash, filters }) {
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No Registrasi</th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIK</th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
@@ -112,6 +113,9 @@ export default function Index({ profiles, flash, filters }) {
                                 {profiles.data.length > 0 ? (
                                     profiles.data.map((profile) => (
                                         <tr key={profile.id} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">{profile.nomor_pendaftaran}</div>
+                                            </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900">{profile.user.nik}</div>
                                             </td>
