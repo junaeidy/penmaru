@@ -16,7 +16,7 @@ export default function MahasiswaLayout({ header, children }) {
         <div className="flex min-h-screen bg-gray-100">
             {userRole === 'mahasiswa' && (
                 <>
-                    <Sidebar isSidebarOpen={isSidebarOpen} userRole={userRole} />
+                    <Sidebar isSidebarOpen={isSidebarOpen} userRole={userRole} user={user} />
                     {/* Overlay untuk mobile */}
                     {isSidebarOpen && (
                         <div

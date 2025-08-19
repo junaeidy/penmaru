@@ -10,6 +10,11 @@ import {
     FileCheck,
     HelpCircle,
     Banknote,
+    IdCard,
+    ClipboardCheck,
+    User,
+    ClipboardList,
+    UserCog
 } from "lucide-react";
 import Modal from '@/Components/Modal';
 
@@ -138,8 +143,9 @@ export default function Dashboard({ flash }) {
                     {!user.mahasiswa_profile && (
                         <Link
                             href={route('mahasiswa.profile.create')}
-                            className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                            className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                            <ClipboardList size={20} />
                             Isi Data Diri
                         </Link>
                     )}
@@ -147,8 +153,9 @@ export default function Dashboard({ flash }) {
                     {user.mahasiswa_profile?.status_pendaftaran === 'draft' && (
                         <Link
                             href={route('mahasiswa.profile.edit')}
-                            className="bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                            className="bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                            <UserCog size={20} />
                             Perbaiki Data Diri
                         </Link>
                     )}
@@ -156,18 +163,20 @@ export default function Dashboard({ flash }) {
                     {user.mahasiswa_profile?.status_pendaftaran === 'menunggu verifikasi' && (
                         <Link
                             href={route('mahasiswa.profile.show')}
-                            className="bg-gray-500 text-white p-4 rounded-lg shadow hover:bg-gray-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                            className="bg-gray-500 text-white p-4 rounded-lg shadow hover:bg-gray-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                            <User size={20} />
                             Lihat Data Diri
                         </Link>
                     )}
 
                     {user.mahasiswa_profile?.status_pendaftaran === 'diverifikasi' && (
                         <Link
-                            href={route('mahasiswa.profile.show')}
-                            className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                            href={route('mahasiswa.kartu-pendaftaran')}
+                            className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                         >
-                            Lihat Data Diri
+                            <IdCard size={20} />
+                            Lihat Kartu Pendaftaran
                         </Link>
                     )}
                     <a
@@ -177,7 +186,8 @@ export default function Dashboard({ flash }) {
                         <Banknote size={20} />
                         <span>Pembayaran</span>
                     </a>
-                    <a className="bg-purple-500 text-white p-4 rounded-lg shadow hover:bg-purple-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <a className="bg-purple-500 text-white p-4 rounded-lg shadow hover:bg-purple-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                        <ClipboardCheck size={20} />
                         Ujian Online
                     </a>
                 </div>
