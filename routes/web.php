@@ -56,8 +56,8 @@ Route::middleware(['auth', 'mahasiswa', 'verified'])->group(function () {
     Route::post('/dashboard/profile/edit', [MahasiswaProfileController::class, 'update'])
         ->name('mahasiswa.profile.update');
     Route::put('/dashboard/profile/edit', [MahasiswaProfileController::class, 'update']);
-    Route::get('/dashboard/kartu-pendaftaran', [MahasiswaController::class, 'show'])
-        ->name('mahasiswa.kartu-pendaftaran');
+    Route::get('/dashboard/kartu/cetak', [MahasiswaController::class, 'cetakKartu'])
+        ->name('mahasiswa.kartu.cetak');
 });
 
 require __DIR__.'/auth.php';

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 use App\Models\Fakultas;
 use App\Models\ProgramStudi;
+use Inertia\Inertia;
 
 class MahasiswaController extends Controller
 {
@@ -20,7 +21,7 @@ class MahasiswaController extends Controller
         ]);
     }
 
-    public function show()
+    public function cetakKartu()
     {
         $profile = Auth::user()->mahasiswaProfile()->with(['fakultas', 'programStudi'])->first();
 
@@ -28,11 +29,10 @@ class MahasiswaController extends Controller
             return redirect()->route('dashboard')
                 ->with(['error' => 'Akses ditolak. Status pendaftaran belum diverifikasi.']);
         }
+        $customPaper = array(0,0,600,450);
+        $pdf = Pdf::loadView('pdf.kartu', compact('profile'))
+                  ->setPaper($customPaper);
 
-        return Inertia::render('Mahasiswa/Kartu/Index', [
-            'profile' => $profile,
-            'fakultas' => Fakultas::all(),
-            'programStudis' => ProgramStudi::all(),
-        ]);
+        return $pdf->download('kartu-pendaftaran-' . Auth::user()->name . '.pdf');
     }
 }

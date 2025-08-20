@@ -171,13 +171,14 @@ export default function Dashboard({ flash }) {
                     )}
 
                     {user.mahasiswa_profile?.status_pendaftaran === 'diverifikasi' && (
-                        <Link
-                            href={route('mahasiswa.kartu-pendaftaran')}
+                        <a
+                            target='_blank'
+                            href={route('mahasiswa.kartu.cetak')}
                             className="bg-blue-500 text-white p-4 rounded-lg shadow hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <IdCard size={20} />
-                            Lihat Kartu Pendaftaran
-                        </Link>
+                            Cetak Kartu Pendaftaran
+                        </a>
                     )}
                     <a
                         onClick={handleOpenModal}
