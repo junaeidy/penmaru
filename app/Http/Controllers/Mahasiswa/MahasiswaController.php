@@ -6,18 +6,25 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Fakultas;
-use App\Models\ProgramStudi;
+use App\Models\Exam;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class MahasiswaController extends Controller
 {
     public function index()
     {
         $user = Auth::user()->load('mahasiswaProfile');
+        
+        $now = Carbon::now();
+
+        $exam = Exam::where('start_at', '<=', $now)
+                    ->where('end_at', '>=', $now)
+                    ->first();
 
         return Inertia::render('Mahasiswa/Dashboard', [
-            'user' => $user
+            'user' => $user,
+            'exam' => $exam,
         ]);
     }
 

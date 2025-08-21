@@ -14,12 +14,14 @@ import {
     ClipboardCheck,
     User,
     ClipboardList,
-    UserCog
+    UserCog,
+    BookOpen
 } from "lucide-react";
 import Modal from '@/Components/Modal';
 
 export default function Dashboard({ flash }) {
     const user = usePage().props.auth.user;
+    const { exam } = usePage().props;
 
     const [showModal, setShowModal] = useState(false);
 
@@ -93,6 +95,8 @@ export default function Dashboard({ flash }) {
                                 ? "bg-yellow-500"
                                 : user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
                                 ? "bg-blue-500"
+                                : user?.mahasiswa_profile?.status_pendaftaran === "selesai ujian"
+                                ? "bg-indigo-500"
                                 : user?.mahasiswa_profile?.status_pendaftaran === "diterima"
                                 ? "bg-green-500"
                                 : "bg-gray-500"
@@ -106,6 +110,9 @@ export default function Dashboard({ flash }) {
                         )}
                         {user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi" && (
                             <FileCheck size={18} />
+                        )}
+                        {user?.mahasiswa_profile?.status_pendaftaran === "selesai ujian" && (
+                            <BookOpen size={18} />
                         )}
                         {user?.mahasiswa_profile?.status_pendaftaran === "diterima" && (
                             <CheckCircle2 size={18} />
@@ -125,6 +132,12 @@ export default function Dashboard({ flash }) {
                         <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-600">
                             <strong>Catatan :</strong>
                             <p>Silakan menunggu informasi lebih lanjut terkait test ujian online</p>
+                        </div>
+                    )}
+                    {user?.mahasiswa_profile?.status_pendaftaran === "selesai ujian" && (
+                        <div className="mt-4 p-4 bg-blue-50 border-l-4 border-indigo-500 text-indigo-600">
+                            <strong>Catatan :</strong>
+                            <p>Anda telah menyelesaikan ujian. Harap tunggu informasi berikutnya.</p>
                         </div>
                     )}
                 </section>
@@ -160,16 +173,16 @@ export default function Dashboard({ flash }) {
                         </Link>
                     )}
 
-                    {user.mahasiswa_profile?.status_pendaftaran === 'menunggu verifikasi' && (
-                        <Link
-                            href={route('mahasiswa.profile.show')}
-                            className="bg-gray-500 text-white p-4 rounded-lg shadow hover:bg-gray-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-                        >
+                    {(user.mahasiswa_profile?.status_pendaftaran === "menunggu verifikasi" ||
+                        user.mahasiswa_profile?.status_pendaftaran === "selesai ujian") && (
+                            <Link
+                                href={route("mahasiswa.profile.show")}
+                                className="bg-gray-500 text-white p-4 rounded-lg shadow hover:bg-gray-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                            >
                             <User size={20} />
                             Lihat Data Diri
-                        </Link>
-                    )}
-
+                            </Link>
+                        )}
                     {user.mahasiswa_profile?.status_pendaftaran === 'diverifikasi' && (
                         <a
                             target='_blank'
@@ -187,10 +200,31 @@ export default function Dashboard({ flash }) {
                         <Banknote size={20} />
                         <span>Pembayaran</span>
                     </a>
-                    <a className="bg-purple-500 text-white p-4 rounded-lg shadow hover:bg-purple-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                    <Link
+                        href={
+                            exam && user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
+                                ? route("mahasiswa.exams.access", exam.id)
+                                : "#"
+                        }
+                        className={`p-4 rounded-lg shadow flex items-center justify-center gap-2 transition-all duration-300 
+                            ${
+                                exam && user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
+                                    ? "bg-purple-500 text-white hover:bg-purple-600 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            }`}
+                        disabled={
+                            !exam || user?.mahasiswa_profile?.status_pendaftaran !== "diverifikasi"
+                        }
+                    >
                         <ClipboardCheck size={20} />
-                        Ujian Online
-                    </a>
+                        {exam
+                            ? user?.mahasiswa_profile?.status_pendaftaran === "selesai ujian"
+                                ? "Sudah Selesai Ujian"
+                                : user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
+                                    ? "Test Online"
+                                    : "Belum Bisa Ujian"
+                            : "Test Online Belum Tersedia"}
+                    </Link>
                 </div>
                 <Modal show={showModal} onClose={handleCloseModal}>
                     <div className="p-6">

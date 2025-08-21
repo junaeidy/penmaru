@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\VerifikasiPendaftaranController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\ProgramStudiController;
+use App\Http\Controllers\Admin\AdminExamController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
 use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
+use App\Http\Controllers\Mahasiswa\ExamController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -29,22 +31,52 @@ Route::middleware('auth')->group(function () {
 //ADMIN ROUTES
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    // Verifikasi
     Route::get('/admin/dashboard/verifikasi', [VerifikasiPendaftaranController::class, 'index'])->name('verifikasi.index');
     Route::get('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'show'])->name('verifikasi.show');
     Route::put('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'update'])->name('verifikasi.update');
-    Route::resource('/admin/dashboard/fakultas', FakultasController::class)->name('index', 'admin.fakultas.index')
+
+    // Fakultas
+    Route::resource('/admin/dashboard/fakultas', FakultasController::class)
+        ->name('index', 'admin.fakultas.index')
         ->name('store', 'admin.fakultas.store')
         ->name('update', 'admin.fakultas.update')
         ->name('destroy', 'admin.fakultas.destroy');
-    Route::resource('/admin/dashboard/program-studi', ProgramStudiController::class)->name('index', 'admin.program-studi.index')
+
+    // Program Studi
+    Route::resource('/admin/dashboard/program-studi', ProgramStudiController::class)
+        ->name('index', 'admin.program-studi.index')
         ->name('store', 'admin.program-studi.store')
         ->name('update', 'admin.program-studi.update')
         ->name('destroy', 'admin.program-studi.destroy');
+
+    //  Ujian
+    Route::prefix('/admin/dashboard/exams')->name('admin.exams.')->group(function () {
+        Route::get('/', [AdminExamController::class, 'index'])->name('index');
+        Route::get('/create', [AdminExamController::class, 'create'])->name('create');
+        Route::post('/', [AdminExamController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [AdminExamController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [AdminExamController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminExamController::class, 'destroy'])->name('destroy');
+
+        // Pertanyaan
+        Route::post('/{examId}/questions', [AdminExamController::class, 'storeQuestion'])->name('questions.store');
+        Route::delete('/questions/{id}', [AdminExamController::class, 'destroyQuestion'])->name('questions.destroy');
+
+        // Statistik
+        Route::get('/{examId}/statistics', [AdminExamController::class, 'statistics'])->name('statistics');
+        Route::get('/{exam}/responses/{response}', [AdminExamController::class, 'showResponse'])->name('responses.show');
+
+    });
 });
+
 
 //MAHASISWA ROUTES
 Route::middleware(['auth', 'mahasiswa', 'verified'])->group(function () {
     Route::get('/dashboard', [MahasiswaController::class, 'index'])->name('dashboard');
+
+    // Profile
     Route::get('/dashboard/profile', [MahasiswaProfileController::class, 'create'])
         ->name('mahasiswa.profile.create');
     Route::post('/dashboard/profile', [MahasiswaProfileController::class, 'store'])
@@ -56,8 +88,21 @@ Route::middleware(['auth', 'mahasiswa', 'verified'])->group(function () {
     Route::post('/dashboard/profile/edit', [MahasiswaProfileController::class, 'update'])
         ->name('mahasiswa.profile.update');
     Route::put('/dashboard/profile/edit', [MahasiswaProfileController::class, 'update']);
+
+    // Kartu
     Route::get('/dashboard/kartu/cetak', [MahasiswaController::class, 'cetakKartu'])
         ->name('mahasiswa.kartu.cetak');
+
+    //  Ujian
+    Route::prefix('dashboard/exams')->name('mahasiswa.exams.')->group(function () {
+        Route::get('{exam}/access', [ExamController::class, 'accessForm'])->name('access');
+        Route::post('{exam}/access', [ExamController::class, 'accessVerify'])->name('access.verify');
+
+        Route::get('{exam}/start', [ExamController::class, 'start'])->name('start');
+        Route::get('{exam}', [ExamController::class, 'show'])->name('show');
+        Route::post('{exam}/submit', [ExamController::class, 'submit'])->name('submit');
+    });
 });
+
 
 require __DIR__.'/auth.php';

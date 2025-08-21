@@ -53,6 +53,8 @@ export default function Index({ profiles, flash, filters }) {
                 return <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Diterima</span>;
             case 'ditolak':
                 return <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Ditolak</span>;
+            case 'selesai ujian':
+                return <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Selesai Ujian</span>;
             default:
                 return <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Draft</span>;
         }
@@ -80,6 +82,8 @@ export default function Index({ profiles, flash, filters }) {
                                 <option value="">Semua Status</option>
                                 <option value="menunggu verifikasi">Menunggu Verifikasi</option>
                                 <option value="draft">Draft</option>
+                                <option value="diverifikasi">Diverifikasi</option>
+                                <option value="selesai ujian">Selesai Ujian</option>
                                 <option value="diterima">Diterima</option>
                                 <option value="ditolak">Ditolak</option>
                             </select>
