@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Modal from '@/Components/Modal';
 
-export default function Dashboard({ flash }) {
+export default function Dashboard({ flash, announcements }) {
     const user = usePage().props.auth.user;
     const { exam } = usePage().props;
 
@@ -140,15 +140,37 @@ export default function Dashboard({ flash }) {
                             <p>Anda telah menyelesaikan ujian. Harap tunggu informasi berikutnya.</p>
                         </div>
                     )}
+                    {user?.mahasiswa_profile?.status_pendaftaran === "diterima" && (
+                        <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-600">
+                            <strong>Selamat!</strong>
+                            <p>Anda telah diterima sebagai mahasiswa. Silakan cek informasi berikutnya dan lengkapi administrasi yang diperlukan.</p>
+                        </div>
+                    )}
                 </section>
 
                 {/* Pengumuman */}
                 <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <h3 className="text-lg font-semibold mb-4">Pengumuman Terbaru</h3>
-                    <ul className="list-disc list-inside text-gray-700 space-y-2">
-                        <li>Ujian online akan dilaksanakan pada 20 Agustus 2025</li>
-                        <li>Batas unggah berkas: 15 Agustus 2025</li>
+                <h3 className="text-lg font-semibold mb-4">Pengumuman Terbaru</h3>
+
+                {announcements.length > 0 ? (
+                    <ul className="space-y-4">
+                    {announcements.map((a) => (
+                        <li key={a.id} className="p-4 border rounded hover:shadow-sm">
+                        <div className="font-medium">{a.title}</div>
+                        <div className="text-gray-700 mt-1">{a.content}</div>
+                        <div className="text-gray-500 text-sm mt-1">
+                            {new Date(a.published_at).toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            })}
+                        </div>
+                        </li>
+                    ))}
                     </ul>
+                ) : (
+                    <p className="text-gray-500">Belum ada pengumuman.</p>
+                )}
                 </div>
 
                 {/* Akses Cepat */}
@@ -218,11 +240,12 @@ export default function Dashboard({ flash }) {
                     >
                         <ClipboardCheck size={20} />
                         {exam
-                            ? user?.mahasiswa_profile?.status_pendaftaran === "selesai ujian"
-                                ? "Sudah Selesai Ujian"
-                                : user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
-                                    ? "Test Online"
-                                    : "Belum Bisa Ujian"
+                            ? user?.mahasiswa_profile?.status_pendaftaran === "selesai ujian" || 
+                                user?.mahasiswa_profile?.status_pendaftaran === "diterima"
+                                    ? "Sudah Selesai Ujian"
+                                    : user?.mahasiswa_profile?.status_pendaftaran === "diverifikasi"
+                                        ? "Test Online"
+                                        : "Belum Bisa Ujian"
                             : "Test Online Belum Tersedia"}
                     </Link>
                 </div>

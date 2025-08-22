@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\VerifikasiPendaftaranController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\ProgramStudiController;
 use App\Http\Controllers\Admin\AdminExamController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
 use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
 use App\Http\Controllers\Mahasiswa\ExamController;
@@ -70,6 +71,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/{exam}/responses/{response}', [AdminExamController::class, 'showResponse'])->name('responses.show');
         Route::delete('/{examId}/responses/{responseId}', [AdminExamController::class, 'delete'])->name('responses.delete');
     });
+
+    // Pengumuman
+
+        Route::get('/admin/dashboard/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+        Route::get('/admin/dashboard/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
+        Route::post('/admin/dashboard/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+        Route::delete('/admin/dashboard/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
 });
 
 

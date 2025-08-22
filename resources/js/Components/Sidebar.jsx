@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavLink from "@/Components/NavLink";
-import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen, IdCard, ClipboardCheck } from "lucide-react";
+import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen, Megaphone, ClipboardCheck } from "lucide-react";
 import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Sidebar({ isSidebarOpen, userRole, user }) {
@@ -95,6 +95,14 @@ export default function Sidebar({ isSidebarOpen, userRole, user }) {
                     </NavLink>
                 </div>
             )}
+            <NavLink
+              href={route("admin.announcements.index")}
+              active={route().current("admin.announcements.*")}
+              icon={<Megaphone className="w-5 h-5" />}
+              className="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
+            >
+              Pengumuman
+            </NavLink>
         </div>
           </>
         )}
