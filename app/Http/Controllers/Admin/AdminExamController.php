@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class AdminExamController extends Controller
 {
@@ -236,4 +237,23 @@ class AdminExamController extends Controller
             ]
         ]);
     }
+
+    public function delete($examId, $responseId)
+    {
+        $exam = Exam::findOrFail($examId);
+        $response = $exam->responses()->findOrFail($responseId);
+
+        $user = $response->user;
+
+        $response->delete();
+
+        if ($user && $user->mahasiswaProfile) {
+            $user->mahasiswaProfile->update([
+                'status_pendaftaran' => 'diverifikasi'
+            ]);
+        }
+
+        return back()->with(['success' => 'Jawaban berhasil dihapus.']);
+    }
+
 }

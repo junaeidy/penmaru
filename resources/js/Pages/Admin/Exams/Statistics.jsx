@@ -1,21 +1,41 @@
-import { usePage, Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { formatDateTime } from "@/Utils/format";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { ToastContainer, toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ConfirmDialog from "@/Components/ConfirmDialog";
 
-export default function Statistics({ flash }) {
-  const { exam, responses } = usePage().props;
+export default function Statistics({ flash, exam, responses }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedResponse, setSelectedResponse] = useState(null);
 
-  useEffect(()=> {
-      if(flash.message.success){
-          toast.success(flash.message.success);
-      }
-      if(flash.message.error){
-          toast.error(flash.message.error);
-      }
+  useEffect(() => {
+    if (flash?.message?.success) {
+      toast.success(flash.message.success);
+    }
+    if (flash?.message?.error) {
+      toast.error(flash.message.error);
+    }
   }, [flash]);
+
+  const handleDelete = () => {
+    if (!selectedResponse) return;
+
+    router.delete(
+      route("admin.exams.responses.delete", {
+        examId: exam.id,
+        responseId: selectedResponse.id,
+      }),
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setSelectedResponse(null);
+          setIsOpen(false);
+        },
+      }
+    );
+  };
 
   return (
     <AdminLayout header={`Statistik Ujian: ${exam.title}`}>
@@ -27,7 +47,7 @@ export default function Statistics({ flash }) {
           Statistik Ujian: {exam.title}
         </h1>
 
-        {/* Card Informasi Ringkas */}
+        {/* Ringkasan Ujian */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
             Ringkasan Ujian
@@ -47,14 +67,12 @@ export default function Statistics({ flash }) {
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Rata-Rata Pengerjaan</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">
-                -
-              </p>
+              <p className="text-2xl font-bold text-blue-600 mt-1">-</p>
             </div>
           </div>
         </div>
 
-        {/* Card Daftar Responden */}
+        {/* Daftar Responden */}
         <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
             Daftar Responden
@@ -73,7 +91,10 @@ export default function Statistics({ flash }) {
                   <th scope="col" className="px-6 py-3 font-semibold">
                     Waktu Selesai
                   </th>
-                  <th scope="col" className="px-6 py-3 font-semibold text-center">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 font-semibold text-center"
+                  >
                     Aksi
                   </th>
                 </tr>
@@ -83,31 +104,49 @@ export default function Statistics({ flash }) {
                   responses.map((res, index) => (
                     <tr
                       key={res.id}
-                      className={`bg-white border-b ${
+                      className={`border-b ${
                         index % 2 === 0 ? "bg-white" : "bg-gray-50"
                       } hover:bg-gray-100 transition-colors duration-200`}
                     >
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {res.user}
                       </td>
-                      <td className="px-6 py-4">{formatDateTime(res.started_at)}</td>
-                      <td className="px-6 py-4">{formatDateTime(res.finished_at)}</td>
+                      <td className="px-6 py-4">
+                        {formatDateTime(res.started_at)}
+                      </td>
+                      <td className="px-6 py-4">
+                        {formatDateTime(res.finished_at)}
+                      </td>
                       <td className="px-6 py-4 text-center">
-                        <Link
-                          href={route("admin.exams.responses.show", {
-                            exam: exam.id,
-                            response: res.id,
-                          })}
-                          className="font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200"
-                        >
-                          Lihat Jawaban
-                        </Link>
+                        <div className="flex items-center justify-center gap-4">
+                          <Link
+                            href={route("admin.exams.responses.show", {
+                              exam: exam.id,
+                              response: res.id,
+                            })}
+                            className="font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                          >
+                            Lihat Jawaban
+                          </Link>
+                          <button
+                            className="font-medium text-red-600 hover:text-red-800 transition-colors duration-200"
+                            onClick={() => {
+                              setSelectedResponse(res);
+                              setIsOpen(true);
+                            }}
+                          >
+                            Hapus Jawaban
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center p-4 text-gray-500 italic">
+                    <td
+                      colSpan="4"
+                      className="text-center p-4 text-gray-500 italic"
+                    >
                       Belum ada peserta yang mengerjakan ujian ini.
                     </td>
                   </tr>
@@ -118,14 +157,19 @@ export default function Statistics({ flash }) {
         </div>
 
         <div className="mt-6 flex justify-start">
-          <Link
-            href={route("admin.exams.index")}
-          >
-            <PrimaryButton>
-              Kembali ke Daftar Ujian
-            </PrimaryButton>
+          <Link href={route("admin.exams.index")}>
+            <PrimaryButton>Kembali ke Daftar Ujian</PrimaryButton>
           </Link>
         </div>
+
+        {/* Konfirmasi Hapus */}
+        <ConfirmDialog
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          onConfirm={handleDelete}
+          title="Konfirmasi Hapus"
+          message={`Apakah Anda yakin ingin menghapus jawaban dari ${selectedResponse?.user}?`}
+        />
       </div>
     </AdminLayout>
   );

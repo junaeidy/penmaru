@@ -68,7 +68,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         // Statistik
         Route::get('/{examId}/statistics', [AdminExamController::class, 'statistics'])->name('statistics');
         Route::get('/{exam}/responses/{response}', [AdminExamController::class, 'showResponse'])->name('responses.show');
-
+        Route::delete('/{examId}/responses/{responseId}', [AdminExamController::class, 'delete'])->name('responses.delete');
     });
 });
 
