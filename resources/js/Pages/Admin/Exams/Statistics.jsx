@@ -2,13 +2,25 @@ import { usePage, Head, Link } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { formatDateTime } from "@/Utils/format";
 import PrimaryButton from "@/Components/PrimaryButton";
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
 
-export default function Statistics() {
+export default function Statistics({ flash }) {
   const { exam, responses } = usePage().props;
+
+  useEffect(()=> {
+      if(flash.message.success){
+          toast.success(flash.message.success);
+      }
+      if(flash.message.error){
+          toast.error(flash.message.error);
+      }
+  }, [flash]);
 
   return (
     <AdminLayout header={`Statistik Ujian: ${exam.title}`}>
       <Head title={`Statistik Ujian - ${exam.title}`} />
+      <ToastContainer />
 
       <div className="p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">

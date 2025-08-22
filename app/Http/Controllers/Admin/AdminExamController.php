@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
+use App\Models\User;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -196,13 +197,16 @@ class AdminExamController extends Controller
     public function showResponse($examId, $responseId)
     {
         $exam = Exam::with('questions.options')->findOrFail($examId);
+        $mahasiswa = User::with('mahasiswaProfile')->findOrFail($exam->responses()->where('id', $responseId)->first()->user_id);
 
         $response = $exam->responses()->with('answers.question.options', 'answers.option', 'user')->findOrFail($responseId);
 
         return Inertia::render('Admin/Exams/ResponDetail', [
             'exam'     => $exam,
+            'mahasiswa' => $mahasiswa,
             'response' => [
                 'id'          => $response->id,
+                'user_id'     => $response->user->id ?? null,
                 'user_name'   => $response->user->name ?? 'Unknown',
                 'started_at'  => $response->started_at,
                 'finished_at' => $response->finished_at,

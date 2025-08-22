@@ -36,6 +36,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard/verifikasi', [VerifikasiPendaftaranController::class, 'index'])->name('verifikasi.index');
     Route::get('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'show'])->name('verifikasi.show');
     Route::put('/admin/dashboard/verifikasi/{id}', [VerifikasiPendaftaranController::class, 'update'])->name('verifikasi.update');
+    Route::post('/admin/dashboard/verifikasi/{id}/set-status', [VerifikasiPendaftaranController::class, 'setStatus'])->name('verifikasi.setStatus');
 
     // Fakultas
     Route::resource('/admin/dashboard/fakultas', FakultasController::class)

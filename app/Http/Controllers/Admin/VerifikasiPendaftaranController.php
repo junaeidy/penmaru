@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Mail\VerifikasiPendaftaranMail;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\StatusPendaftaranMail;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class VerifikasiPendaftaranController extends Controller
 {
@@ -70,5 +73,43 @@ class VerifikasiPendaftaranController extends Controller
 
         return redirect()->route('verifikasi.index')
             ->with(['success' => 'Status pendaftaran berhasil diperbarui.']);
+    }
+
+    public function setStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:diterima,ditolak',
+        ]);
+
+        $mahasiswa = User::with('mahasiswaProfile')->findOrFail($id);
+        $profile   = $mahasiswa->mahasiswaProfile;
+
+        if ($profile) {
+            $profile->status_pendaftaran = $request->status;
+
+            $fields = [
+                'foto_ktp',
+                'foto_kk',
+                'ijazah',
+                'skhu',
+                'pas_foto',
+                'bukti_pembayaran',
+            ];
+
+            foreach ($fields as $field) {
+                if ($profile->$field && Storage::disk('public')->exists($profile->$field)) {
+                    Storage::disk('public')->delete($profile->$field);
+                }
+                $profile->$field = '';
+            }
+
+            $profile->save();
+        }
+
+        Mail::to($mahasiswa->email)->send(
+            new StatusPendaftaranMail($mahasiswa->name, $request->status)
+        );
+
+        return back()->with(['success' => "Status mahasiswa berhasil diubah menjadi {$request->status}."]);
     }
 }
