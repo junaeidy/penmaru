@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavLink from "@/Components/NavLink";
-import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen, Megaphone, ClipboardCheck } from "lucide-react";
+import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen, Megaphone, ClipboardCheck, Settings } from "lucide-react";
 import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Sidebar({ isSidebarOpen, userRole, user }) {
@@ -124,6 +124,14 @@ export default function Sidebar({ isSidebarOpen, userRole, user }) {
               className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Formulir Data Diri
+            </NavLink>
+            <NavLink
+              href={route("mahasiswa.settings")}
+              active={route().current("mahasiswa.settings")}
+              icon={<Settings className="w-5 h-5" />}
+              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
+            >
+              Pengaturan
             </NavLink>
           </>
         )}

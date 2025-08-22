@@ -10,6 +10,7 @@ use App\Http\Controllers\Mahasiswa\MahasiswaController;
 use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
 use App\Http\Controllers\Mahasiswa\ExamController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -111,6 +112,9 @@ Route::middleware(['auth', 'mahasiswa', 'verified'])->group(function () {
         Route::get('{exam}', [ExamController::class, 'show'])->name('show');
         Route::post('{exam}/submit', [ExamController::class, 'submit'])->name('submit');
     });
+
+    // Pengaturan
+    Route::get('/dashboard/settings', [SettingsController::class, 'index'])->name('mahasiswa.settings');
 });
 
 
