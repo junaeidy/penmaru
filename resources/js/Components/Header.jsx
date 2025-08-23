@@ -80,6 +80,7 @@ export default function Header({ onToggleSidebar, header, user }) {
                         </Dropdown.Trigger>
                         <Dropdown.Content>
                             <Dropdown.Link
+                                href={route('logout')}
                                 method="post"
                                 as="button"
                             >

@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'mahasiswa' => \App\Http\Middleware\MahasiswaMiddleware::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'check.registration' => \App\Http\Middleware\CheckRegistrationPeriod::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

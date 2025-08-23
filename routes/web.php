@@ -104,9 +104,9 @@ Route::middleware(['auth', 'mahasiswa', 'verified'])->group(function () {
 
     // Profile
     Route::get('/dashboard/profile', [MahasiswaProfileController::class, 'create'])
-        ->name('mahasiswa.profile.create');
+        ->name('mahasiswa.profile.create')->middleware('check.registration');
     Route::post('/dashboard/profile', [MahasiswaProfileController::class, 'store'])
-        ->name('mahasiswa.profile.store');
+        ->name('mahasiswa.profile.store')->middleware('check.registration');
     Route::get('/dashboard/profile/show', [MahasiswaProfileController::class, 'show'])
         ->name('mahasiswa.profile.show');
     Route::get('/dashboard/profile/edit', [MahasiswaProfileController::class, 'edit'])
