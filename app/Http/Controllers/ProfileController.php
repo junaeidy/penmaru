@@ -37,7 +37,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('mahasiswa.settings')->with(['success' => 'Profile berhasil diupdate.']);
+        return back()->with(['success' => 'Profile berhasil diupdate.']);
     }
 
     /**

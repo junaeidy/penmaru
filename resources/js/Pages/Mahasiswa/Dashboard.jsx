@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MahasiswaLayout from '@/Layouts/MahasiswaLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { ToastContainer, toast } from "react-toastify";
-import { useEffect } from 'react';
 import {
     Edit3,
     Clock,
@@ -15,11 +14,15 @@ import {
     User,
     ClipboardList,
     UserCog,
-    BookOpen
+    BookOpen,
+    CreditCard, 
+    Landmark, 
+    Copy,
+    Check,
 } from "lucide-react";
 import Modal from '@/Components/Modal';
 
-export default function Dashboard({ flash, announcements }) {
+export default function Dashboard({ flash, announcements, bankAccounts }) {
     const user = usePage().props.auth.user;
     const { exam } = usePage().props;
 
@@ -27,11 +30,13 @@ export default function Dashboard({ flash, announcements }) {
 
     const handleOpenModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
+    const [copiedId, setCopiedId] = useState(null);
 
-    const dataPembayaran = {
-        namaRekening: "Universitas XYZ",
-        nomorRekening: "1234567890",
-        bank: "Bank ABC",
+    const handleCopy = (accId, accNumber) => {
+        navigator.clipboard.writeText(accNumber);
+        setCopiedId(accId);
+
+        setTimeout(() => setCopiedId(null), 2000);
     };
 
     useEffect(()=> {
@@ -251,27 +256,73 @@ export default function Dashboard({ flash, announcements }) {
                 </div>
                 <Modal show={showModal} onClose={handleCloseModal}>
                     <div className="p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Informasi Pembayaran</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <Landmark className="w-5 h-5 text-blue-600" />
+                            Informasi Pembayaran
+                        </h3>
                         <p className="text-gray-700 mb-2">
-                            Silakan lakukan pembayaran ke rekening berikut:
+                            Silakan lakukan pembayaran ke salah satu rekening berikut:
                         </p>
-                        <div className="bg-gray-100 p-4 rounded-lg mb-4">
-                            <div className="mb-2">
-                                <p className="text-sm text-gray-500">Nama Rekening:</p>
-                                <p className="font-medium text-gray-800">{dataPembayaran.namaRekening}</p>
-                            </div>
-                            <div className="mb-2">
-                                <p className="text-sm text-gray-500">Nomor Rekening:</p>
-                                <p className="font-medium text-gray-800">{dataPembayaran.nomorRekening}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500">Bank:</p>
-                                <p className="font-medium text-gray-800">{dataPembayaran.bank}</p>
-                            </div>
-                        </div>
+
+                        {bankAccounts.length > 0 ? (
+                            bankAccounts.map((acc) => (
+                                <div
+                                    key={acc.id}
+                                    className="bg-gray-100 p-4 rounded-lg mb-4 shadow-sm border"
+                                >
+                                    {/* Nama Pemilik */}
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <User className="w-4 h-4 text-gray-500" />
+                                        <div>
+                                            <p className="text-sm text-gray-500">Nama Rekening</p>
+                                            <p className="font-medium text-gray-800">{acc.account_holder}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Nomor Rekening */}
+                                    <div className="mb-2 flex items-center gap-2 justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <CreditCard className="w-4 h-4 text-gray-500" />
+                                            <div>
+                                                <p className="text-sm text-gray-500">Nomor Rekening</p>
+                                                <p className="font-medium text-gray-800">{acc.account_number}</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleCopy(acc.id, acc.account_number)}
+                                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                                            title="Salin Nomor Rekening"
+                                        >
+                                            {copiedId === acc.id ? (
+                                                <>
+                                                    <Check className="w-4 h-4 text-green-600" />
+                                                    <span className="text-sm text-green-600">Disalin!</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy className="w-4 h-4" />
+                                                    <span className="text-sm">Salin</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    {/* Bank */}
+                                    <div className="flex items-center gap-2">
+                                        <Landmark className="w-4 h-4 text-gray-500" />
+                                        <div>
+                                            <p className="text-sm text-gray-500">Bank</p>
+                                            <p className="font-medium text-gray-800">{acc.bank_name}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500">Belum ada rekening terdaftar.</p>
+                        )}
 
                         {/* Tombol Tutup */}
-                        <div className="flex justify-end">
+                        <div className="flex justify-end mt-4">
                             <button
                                 type="button"
                                 className="inline-flex justify-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"

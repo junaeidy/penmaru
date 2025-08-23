@@ -10,6 +10,7 @@ use App\Models\Exam;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use App\Models\Announcement;
+use App\Models\BankAccount;
 
 class MahasiswaController extends Controller
 {
@@ -17,6 +18,7 @@ class MahasiswaController extends Controller
     {
         $user = Auth::user()->load('mahasiswaProfile');
         $now = Carbon::now();
+        $bankAccounts = BankAccount::all();
 
         $exam = Exam::where('start_at', '<=', $now)
                     ->where('end_at', '>=', $now)
@@ -30,6 +32,7 @@ class MahasiswaController extends Controller
             'user' => $user,
             'exam' => $exam,
             'announcements' => $announcements,
+            'bankAccounts' => $bankAccounts,
         ]);
     }
 

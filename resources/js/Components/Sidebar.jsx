@@ -103,6 +103,13 @@ export default function Sidebar({ isSidebarOpen, userRole, user }) {
             >
               Pengumuman
             </NavLink>
+            <NavLink
+              href={route("admin.settings.index")}
+              icon={<Settings className="w-5 h-5" />}
+              className="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
+            >
+              Pengaturan
+            </NavLink>
         </div>
           </>
         )}

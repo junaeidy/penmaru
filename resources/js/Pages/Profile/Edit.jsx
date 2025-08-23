@@ -4,8 +4,7 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
-        <div className="py-12 px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-4xl space-y-8">
+            <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
                 {/* Bagian Perbarui Informasi Profil */}
                 <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
                     <UpdateProfileInformationForm
@@ -17,6 +16,5 @@ export default function Edit({ mustVerifyEmail, status }) {
                 {/* Bagian Perbarui Kata Sandi */}
                     <UpdatePasswordForm />
             </div>
-        </div>
     );
 }

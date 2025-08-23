@@ -11,4 +11,8 @@ class SettingsController extends Controller
     {
         return Inertia::render('Mahasiswa/Settings/Index');
     }
+    public function indexAdmin()
+    {
+        return Inertia::render('Admin/Settings/Index');
+    }
 }
