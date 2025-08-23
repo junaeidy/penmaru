@@ -19,12 +19,17 @@ import {
     Landmark, 
     Copy,
     Check,
+    CheckCircle, 
+    GraduationCap, 
+    Award, 
+    XCircle
 } from "lucide-react";
 import Modal from '@/Components/Modal';
 
 export default function Dashboard({ flash, announcements, bankAccounts }) {
     const user = usePage().props.auth.user;
     const { exam } = usePage().props;
+   const status = user?.mahasiswa_profile?.status_pendaftaran || "draft";
 
     const [showModal, setShowModal] = useState(false);
 
@@ -47,6 +52,25 @@ export default function Dashboard({ flash, announcements, bankAccounts }) {
             toast.error(flash.message.error);
         }
     }, [flash]);
+
+
+    const steps = [
+        { key: "draft", label: "Isi Data Diri", icon: <User className="w-5 h-5" /> },
+        { key: "diverifikasi", label: "Verifikasi Data", icon: <FileCheck className="w-5 h-5" /> },
+        { key: "selesai ujian", label: "Ujian", icon: <GraduationCap className="w-5 h-5" /> },
+        { key: "hasil", label: "Hasil Seleksi", icon: <Award className="w-5 h-5" /> },
+    ];
+
+    const statusToStep = {
+        draft: 0,
+        "menunggu verifikasi": 1,
+        diverifikasi: 1,
+        "selesai ujian": 2,
+        diterima: 3,
+        ditolak: 3,
+    };
+
+    const currentStep = statusToStep[status] ?? 0;
 
     return (
         <MahasiswaLayout
@@ -84,11 +108,86 @@ export default function Dashboard({ flash, announcements, bankAccounts }) {
 
                 {/* Progress Pendaftaran */}
                 <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <h3 className="text-lg font-semibold mb-4">Progress Pendaftaran</h3>
-                    <div className="w-full bg-gray-200 rounded-full h-4">
-                        <div className="bg-yellow-500 h-4 rounded-full" style={{ width: '50%' }}></div>
-                    </div>
-                    <p className="mt-2 text-gray-500 text-sm">2 dari 4 tahap telah selesai</p>
+                <h3 className="text-lg font-semibold mb-6">Progress Pendaftaran</h3>
+
+                {/* Stepper Horizontal (Desktop) */}
+                <div className="hidden md:flex items-center justify-between">
+                    {steps.map((step, index) => {
+                    const isCompleted = index < currentStep;
+                    const isCurrent = index === currentStep;
+
+                    let icon = step.icon;
+                    if (isCompleted) icon = <CheckCircle className="w-6 h-6 text-green-500" />;
+                    if (isCurrent && status === "ditolak") icon = <XCircle className="w-6 h-6 text-red-500" />;
+                    else if (isCurrent && status === "diterima") icon = <CheckCircle className="w-6 h-6 text-green-500" />;
+                    else if (isCurrent) icon = <Clock className="w-6 h-6 text-yellow-500" />;
+
+                    return (
+                        <div key={step.key} className="flex-1 flex flex-col items-center">
+                        <div
+                            className={`flex items-center justify-center w-10 h-10 rounded-full border-2 mb-2
+                            ${isCompleted ? "border-green-500 bg-green-50" : isCurrent ? "border-yellow-500 bg-yellow-50" : "border-gray-300"}
+                            `}
+                        >
+                            {icon}
+                        </div>
+                        <p
+                            className={`text-sm text-center ${
+                            isCompleted ? "text-green-600" : isCurrent ? "text-yellow-600" : "text-gray-400"
+                            }`}
+                        >
+                            {step.label}
+                        </p>
+                        {index < steps.length - 1 && (
+                            <div className="w-full h-0.5 bg-gray-300 mt-2 relative">
+                            <div
+                                className="absolute top-0 left-0 h-0.5 bg-green-500 transition-all duration-500"
+                                style={{
+                                width: isCompleted ? "100%" : isCurrent ? "50%" : "0%",
+                                }}
+                            ></div>
+                            </div>
+                        )}
+                        </div>
+                    );
+                    })}
+                </div>
+
+                {/* Stepper Vertical (Mobile) */}
+                <div className="md:hidden space-y-6">
+                    {steps.map((step, index) => {
+                    const isCompleted = index < currentStep;
+                    const isCurrent = index === currentStep;
+
+                    let icon = step.icon;
+                    if (isCompleted) icon = <CheckCircle className="w-6 h-6 text-green-500" />;
+                    if (isCurrent && status === "ditolak") icon = <XCircle className="w-6 h-6 text-red-500" />;
+                    else if (isCurrent && status === "diterima") icon = <CheckCircle className="w-6 h-6 text-green-500" />;
+                    else if (isCurrent) icon = <Clock className="w-6 h-6 text-yellow-500" />;
+
+                    return (
+                        <div key={step.key} className="flex items-start">
+                        <div
+                            className={`flex items-center justify-center w-10 h-10 rounded-full border-2
+                            ${isCompleted ? "border-green-500 bg-green-50" : isCurrent ? "border-yellow-500 bg-yellow-50" : "border-gray-300"}
+                            `}
+                        >
+                            {icon}
+                        </div>
+                        <div className="ml-4">
+                            <p
+                            className={`text-sm font-medium ${
+                                isCompleted ? "text-green-600" : isCurrent ? "text-yellow-600" : "text-gray-500"
+                            }`}
+                            >
+                            {step.label}
+                            </p>
+                        </div>
+                        </div>
+                    );
+                    })}
+                </div>
+                
                 </div>
                 <section className="bg-white p-6 rounded-lg shadow-md mb-6">
                     <h2 className="text-lg font-bold mb-2">Status Pendaftaran</h2>
