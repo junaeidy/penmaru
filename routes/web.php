@@ -91,6 +91,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('/bank-accounts', [SettingController::class, 'storeBankAccount'])->name('bank.store');
         Route::delete('/bank-accounts/{bankAccount}', [SettingController::class, 'destroyBankAccount'])->name('bank.destroy');
     });
+
+    // Export
+    Route::get('/admin/dashboard/export/pdf', [MahasiswaController::class, 'exportPdf'])->name('admin.mahasiswa.export.pdf');
+    Route::get('/admin/dashboard/export/excel', [MahasiswaController::class, 'exportExcel'])->name('admin.mahasiswa.export.excel');
 });
 
 

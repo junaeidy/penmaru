@@ -11,6 +11,9 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use App\Models\Announcement;
 use App\Models\BankAccount;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MahasiswaExport;
+use App\Models\MahasiswaProfile;
 
 class MahasiswaController extends Controller
 {
@@ -49,5 +52,33 @@ class MahasiswaController extends Controller
                   ->setPaper($customPaper);
 
         return $pdf->download('kartu-pendaftaran-' . Auth::user()->name . '.pdf');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $profiles = MahasiswaProfile::with(['user', 'fakultas', 'programStudi'])
+            ->when($request->status, fn($q) => $q->where('status_pendaftaran', $request->status))
+            ->when($request->prodi, fn($q) => $q->where('program_studi_id', $request->prodi))
+            ->when($request->tahun, fn($q) => $q->where('tahun_lulus', $request->tahun))
+            ->get();
+
+        $pdf = Pdf::loadView('exports.mahasiswa_pdf', [
+            'mahasiswa' => $profiles
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-calon-mahasiswa.pdf');
+    }
+
+    // Excel Export with filter
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(
+            new MahasiswaExport(
+                $request->status,
+                $request->prodi,
+                $request->tahun
+            ),
+            'data-calon-mahasiswa.xlsx'
+        );
     }
 }
