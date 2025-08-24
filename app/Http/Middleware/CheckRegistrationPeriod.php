@@ -17,7 +17,7 @@ class CheckRegistrationPeriod
 
             if ($now->lt(Carbon::parse($setting->registration_start)) || 
                 $now->gt(Carbon::parse($setting->registration_end))) {
-                return back()->with(['error' => 'Masa pendaftaran sudah habis, Silahkan tunggu periode berkutnya']);
+                return back()->with(['error' => 'Masa pendaftaran sudah habis, Silahkan tunggu periode berikutnya']);
             }
         }
 

@@ -16,6 +16,11 @@ class ExamResponse extends Model
         'finished_at',
     ];
 
+    protected $casts = [
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime',
+    ];
+
     // Relasi ke exam
     public function exam()
     {

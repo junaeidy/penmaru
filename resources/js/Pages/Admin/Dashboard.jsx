@@ -3,9 +3,9 @@ import { Head, usePage } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import {
     Users,
-    CreditCard,
-    CalendarDays,
+    XCircle,
     CheckCircle,
+    Clock,
 } from "lucide-react";
 import {
     PieChart,
@@ -23,8 +23,11 @@ import {
 import CountUp from "react-countup";
 import { ToastContainer, toast } from "react-toastify";
 
-export default function Dashboard({ flash }) {
+export default function Dashboard({ flash, stats, trendData, statsMahasiswa, activities }) {
     const user = usePage().props.auth.user;
+    const chartData = Object.entries(stats)
+        .map(([name, value]) => ({ name, value }))
+        .filter((item) => item.value > 0);
 
     useEffect(()=> {
         if(flash.message.success){
@@ -35,29 +38,22 @@ export default function Dashboard({ flash }) {
         }
     }, [flash]);
 
-    const stats = {
-        totalMahasiswa: 150,
-        pembayaranPending: 25,
-        ujianTerjadwal: 10,
-        pendaftaranSelesai: 90,
+
+    const COLORS = ["#FBBF24", "#3B82F6", "#10B981", "#8B5CF6", "#EF4444", "#6B7280"];
+
+    const activityIcons = {
+        register: "👤",
+        update: "✏️",
+        finish_exam: "📝",
+        schedule_exam: "📅",
     };
 
-    const chartData = [
-        { name: "Sudah Daftar", value: 90 },
-        { name: "Belum Bayar", value: 25 },
-        { name: "Sudah Bayar", value: 35 },
-    ];
-
-    const trendData = [
-        { month: "Jan", daftar: 30 },
-        { month: "Feb", daftar: 45 },
-        { month: "Mar", daftar: 60 },
-        { month: "Apr", daftar: 50 },
-        { month: "Mei", daftar: 80 },
-        { month: "Jun", daftar: 70 },
-    ];
-
-    const COLORS = ["#4CAF50", "#FF9800", "#2196F3"];
+    const activityMessages = {
+        register: (name) => `${name} mendaftar`,
+        update: (name) => `${name} memperbarui data diri`,
+        finish_exam: (name, exam) => `${name} menyelesaikan ujian ${exam}`,
+        schedule_exam: (title) => `Ujian ${title} dijadwalkan`,
+    };
 
     return (
         <AdminLayout
@@ -96,26 +92,26 @@ export default function Dashboard({ flash }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <WidgetCard
                         icon={<Users className="w-8 h-8 text-white" />}
-                        title="Total Mahasiswa"
-                        value={stats.totalMahasiswa}
+                        title="Total Pendaftar"
+                        value={statsMahasiswa.totalPendaftar}
                         gradient="linear-gradient(135deg, #667eea, #764ba2)"
                     />
                     <WidgetCard
-                        icon={<CreditCard className="w-8 h-8 text-white" />}
-                        title="Pembayaran Pending"
-                        value={stats.pembayaranPending}
-                        gradient="linear-gradient(135deg, #ff758c, #ff7eb3)"
+                        icon={<CheckCircle className="w-8 h-8 text-white" />}
+                        title="Diterima"
+                        value={statsMahasiswa.totalDiterima}
+                        gradient="linear-gradient(135deg, #62cff4, #2c67f2)"
                     />
                     <WidgetCard
-                        icon={<CalendarDays className="w-8 h-8 text-white" />}
-                        title="Ujian Terjadwal"
-                        value={stats.ujianTerjadwal}
+                        icon={<XCircle className="w-8 h-8 text-white" />}
+                        title="Ditolak"
+                        value={statsMahasiswa.totalDitolak}
                         gradient="linear-gradient(135deg, #f7971e, #ffd200)"
                     />
                     <WidgetCard
-                        icon={<CheckCircle className="w-8 h-8 text-white" />}
-                        title="Pendaftaran Selesai"
-                        value={stats.pendaftaranSelesai}
+                        icon={<Clock className="w-8 h-8 text-white" />}
+                        title="Menunggu Diverifikasi"
+                        value={statsMahasiswa.menungguVerifikasi}
                         gradient="linear-gradient(135deg, #43cea2, #185a9d)"
                     />
                 </div>
@@ -124,57 +120,47 @@ export default function Dashboard({ flash }) {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Pie Chart */}
                     <div className="bg-white p-6 rounded-xl shadow-sm">
-                        <h3 className="text-lg font-bold mb-4">
-                            Statistik Pendaftaran
-                        </h3>
-                        <div className="w-full h-72">
-                            <ResponsiveContainer>
-                                <PieChart>
-                                    <Pie
-                                        data={chartData}
-                                        cx="50%"
-                                        cy="50%"
-                                        labelLine={false}
-                                        outerRadius={100}
-                                        dataKey="value"
-                                        label={({ name, percent }) =>
-                                            `${name} ${(percent * 100).toFixed(
-                                                0
-                                            )}%`
-                                        }
-                                    >
-                                        {chartData.map((entry, index) => (
-                                            <Cell
-                                                key={`cell-${index}`}
-                                                fill={
-                                                    COLORS[
-                                                        index % COLORS.length
-                                                    ]
-                                                }
-                                            />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
+                    <h3 className="text-lg font-bold mb-4">Statistik Pendaftaran</h3>
+                    <div className="w-full h-72">
+                        <ResponsiveContainer>
+                            <PieChart>
+                                <Pie
+                                    data={chartData}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    outerRadius={100}
+                                    dataKey="value"
+                                    label={({ name, percent }) =>
+                                        `${name} ${(percent * 100).toFixed(0)}%`
+                                    }
+                                >
+                                    {chartData.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={COLORS[index % COLORS.length]}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
                     </div>
+                </div>
 
                     {/* Bar Chart */}
                     <div className="bg-white p-6 rounded-xl shadow-sm">
-                        <h3 className="text-lg font-bold mb-4">
-                            Tren Pendaftaran Bulanan
-                        </h3>
+                        <h3 className="text-lg font-bold mb-4">Tren Pendaftaran Bulanan</h3>
                         <div className="w-full h-72">
                             <ResponsiveContainer>
                                 <BarChart data={trendData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="month" />
-                                    <YAxis />
+                                    <YAxis allowDecimals={false} />
                                     <Tooltip />
                                     <Legend />
                                     <Bar
-                                        dataKey="daftar"
+                                        dataKey="Pendaftar"
                                         fill="#77BEF0"
                                         radius={[4, 4, 0, 0]}
                                     />
@@ -188,9 +174,17 @@ export default function Dashboard({ flash }) {
                 <div className="bg-white p-6 rounded-xl shadow-sm">
                     <h3 className="text-lg font-bold mb-4">Aktivitas Terbaru</h3>
                     <ul className="space-y-3 text-sm text-gray-600">
-                        <li>👤 Budi mendaftar (5 menit lalu)</li>
-                        <li>💳 Pembayaran diterima dari Siti (1 jam lalu)</li>
-                        <li>📅 Ujian Matematika dijadwalkan (2 hari lagi)</li>
+                        {activities.map((act, i) => (
+                            <li key={i} className="flex items-start">
+                                <span className="mr-2">{activityIcons[act.type]}</span>
+                                <span>
+                                {act.type === "finish_exam"
+                                    ? activityMessages[act.type](act.name, act.exam)
+                                    : activityMessages[act.type](act.name)}
+                                <span className="text-gray-400 text-xs"> ({act.time_human})</span>
+                                </span>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>
