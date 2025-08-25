@@ -484,31 +484,31 @@ export default function ProfileForm({ auth, fakultas, programStudis }) {
                 <form onSubmit={submitForm}>
                     {renderStepFields()}
                     <div className="flex justify-between mt-8">
-    {currentStep > 0 && (
-        <PrimaryButton type="button" onClick={prevStep} className="bg-gray-500 hover:bg-gray-600">
-            <ArrowLeft size={16} className="mr-2" /> Sebelumnya
-        </PrimaryButton>
-    )}
-    <div className="ml-auto">
-        {currentStep < steps.length - 1 ? (
-            <PrimaryButton 
-                type="button" 
-                onClick={nextStep} 
-                disabled={!isStepComplete(currentStep)}
-            >
-                Selanjutnya <ArrowRight size={16} className="ml-2" />
-            </PrimaryButton>
-        ) : (
-            <PrimaryButton 
-                type="submit" 
-                disabled={processing || !isStepComplete(currentStep)} 
-                className="bg-green-500 hover:bg-green-600"
-            >
-                Simpan
-            </PrimaryButton>
-        )}
-    </div>
-</div>
+                        {currentStep > 0 && (
+                            <PrimaryButton type="button" onClick={prevStep} className="bg-gray-500 hover:bg-gray-600">
+                                <ArrowLeft size={16} className="mr-2" /> Sebelumnya
+                            </PrimaryButton>
+                        )}
+                        <div className="ml-auto">
+                            {currentStep < steps.length - 1 ? (
+                                <PrimaryButton 
+                                    type="button" 
+                                    onClick={nextStep} 
+                                    disabled={!isStepComplete(currentStep)}
+                                >
+                                    Selanjutnya <ArrowRight size={16} className="ml-2" />
+                                </PrimaryButton>
+                            ) : (
+                                <PrimaryButton 
+                                    type="submit" 
+                                    disabled={processing || !isStepComplete(currentStep)} 
+                                    className="bg-green-500 hover:bg-green-600"
+                                >
+                                    Simpan
+                                </PrimaryButton>
+                            )}
+                        </div>
+                    </div>
                 </form>
             </div>
         </MahasiswaLayout>

@@ -50,8 +50,8 @@ export default function ResetPassword({ token, email }) {
                                 autoComplete="username"
                                 onChange={(e) => setData('email', e.target.value)}
                             />
-                            <InputError message={errors.email} className="mt-2" />
                         </div>
+                            <InputError message={errors.email} className="mt-2" />
                     </div>
 
                     <div className="mb-4">
@@ -71,8 +71,8 @@ export default function ResetPassword({ token, email }) {
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="Masukkan password baru"
                             />
-                            <InputError message={errors.password} className="mt-2" />
                         </div>
+                            <InputError message={errors.password} className="mt-2" />
                     </div>
 
                     <div>
@@ -91,8 +91,8 @@ export default function ResetPassword({ token, email }) {
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 placeholder="Konfirmasi password baru"
                             />
-                            <InputError message={errors.password_confirmation} className="mt-2" />
                         </div>
+                            <InputError message={errors.password_confirmation} className="mt-2" />
                     </div>
 
                     <PrimaryButton className="w-full justify-center mt-6" disabled={processing}>

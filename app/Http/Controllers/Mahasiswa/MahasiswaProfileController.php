@@ -39,7 +39,6 @@ class MahasiswaProfileController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            // Data Diri
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -48,8 +47,6 @@ class MahasiswaProfileController extends Controller
             'no_hp' => ['required', 'string', 'max:20', 'regex:/^(\+62|0)\d{8,12}$/'],
             'status_perkawinan' => 'required|string|max:50',
             'kewarganegaraan' => 'required|string|max:50',
-
-            // Orang Tua/Wali
             'nama_ayah' => 'required|string|max:100',
             'nama_ibu' => 'required|string|max:100',
             'pekerjaan_ayah' => 'required|string|max:100',
@@ -60,17 +57,11 @@ class MahasiswaProfileController extends Controller
             'pendidikan_ibu' => 'required|string|max:50',
             'penghasilan_ayah' => 'required|string|max:50',
             'penghasilan_ibu' => 'required|string|max:50',
-
-            // Pendidikan Sebelumnya
             'nama_sekolah' => 'required|string|max:150',
             'jurusan' => 'required|string|max:100',
             'tahun_lulus' => 'required|digits:4',
-
-            // Fakultas & Program Studi
             'fakultas_id' => 'required|exists:fakultas,id',
             'program_studi_id' => 'required|exists:program_studis,id',
-
-            // Berkas
             'foto_ktp' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'foto_kk' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'ijazah' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -82,9 +73,9 @@ class MahasiswaProfileController extends Controller
             'string' => 'Kolom :attribute harus berupa teks.',
             'max' => [
                 'numeric' => 'Kolom :attribute tidak boleh lebih dari :max.',
-                'file'    => 'Kolom :attribute tidak boleh lebih dari :max kilobyte.',
-                'string'  => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
-                'array'   => 'Kolom :attribute tidak boleh memiliki lebih dari :max item.',
+                'file' => 'Kolom :attribute tidak boleh lebih dari :max kilobyte.',
+                'string' => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
+                'array' => 'Kolom :attribute tidak boleh memiliki lebih dari :max item.',
             ],
             'in' => 'Pilihan untuk :attribute tidak valid.',
             'date' => 'Kolom :attribute harus berupa tanggal yang valid.',
@@ -95,10 +86,11 @@ class MahasiswaProfileController extends Controller
             'exists' => 'Kolom :attribute tidak valid.',
         ]);
 
-        // Upload file
+        $sanitizedData = $this->sanitizeStringInputs($validated);
+
         foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto', 'bukti_pembayaran'] as $field) {
             if ($request->hasFile($field)) {
-                $validated[$field] = $request->file($field)->store('berkas', 'public');
+                $sanitizedData[$field] = $request->file($field)->store('berkas', 'public');
             }
         }
 
@@ -108,12 +100,11 @@ class MahasiswaProfileController extends Controller
             ? $profile->nomor_registrasi
             : MahasiswaProfile::generateNomorPendaftaran();
 
-        // Simpan data
         MahasiswaProfile::updateOrCreate(
             ['user_id' => $user->id],
-            array_merge($validated, [
+            array_merge($sanitizedData, [
                 'status_pendaftaran' => 'menunggu verifikasi',
-                'nomor_pendaftaran'   => $nomorRegistrasi,
+                'nomor_pendaftaran' => $nomorRegistrasi,
             ])
         );
 
@@ -169,7 +160,6 @@ class MahasiswaProfileController extends Controller
         }
 
         $validated = $request->validate([
-            // Data Diri
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -178,8 +168,6 @@ class MahasiswaProfileController extends Controller
             'no_hp' => ['required', 'string', 'max:20', 'regex:/^(\+62|0)\d{8,12}$/'],
             'status_perkawinan' => 'required|string|max:50',
             'kewarganegaraan' => 'required|string|max:50',
-
-            // Orang Tua/Wali
             'nama_ayah' => 'required|string|max:100',
             'nama_ibu' => 'required|string|max:100',
             'pekerjaan_ayah' => 'required|string|max:100',
@@ -190,13 +178,9 @@ class MahasiswaProfileController extends Controller
             'pendidikan_ibu' => 'required|string|max:50',
             'penghasilan_ayah' => 'required|string|max:50',
             'penghasilan_ibu' => 'required|string|max:50',
-
-            // Pendidikan Sebelumnya
             'nama_sekolah' => 'required|string|max:150',
             'jurusan' => 'required|string|max:100',
             'tahun_lulus' => 'required|digits:4',
-
-            // Berkas
             'foto_ktp' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'foto_kk' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'ijazah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -208,9 +192,9 @@ class MahasiswaProfileController extends Controller
             'string' => 'Kolom :attribute harus berupa teks.',
             'max' => [
                 'numeric' => 'Kolom :attribute tidak boleh lebih dari :max.',
-                'file'    => 'Kolom :attribute tidak boleh lebih dari :max kilobyte.',
-                'string'  => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
-                'array'   => 'Kolom :attribute tidak boleh memiliki lebih dari :max item.',
+                'file' => 'Kolom :attribute tidak boleh lebih dari :max kilobyte.',
+                'string' => 'Kolom :attribute tidak boleh lebih dari :max karakter.',
+                'array' => 'Kolom :attribute tidak boleh memiliki lebih dari :max item.',
             ],
             'in' => 'Pilihan untuk :attribute tidak valid.',
             'date' => 'Kolom :attribute harus berupa tanggal yang valid.',
@@ -221,18 +205,20 @@ class MahasiswaProfileController extends Controller
             'exists' => 'Kolom :attribute tidak valid.',
         ]);
 
+        $sanitizedData = $this->sanitizeStringInputs($validated);
+
         foreach (['foto_ktp', 'foto_kk', 'ijazah', 'skhu', 'pas_foto', 'bukti_pembayaran'] as $field) {
             if ($request->hasFile($field)) {
                 if ($profile->$field && Storage::disk('public')->exists($profile->$field)) {
                     Storage::disk('public')->delete($profile->$field);
                 }
-                $validated[$field] = $request->file($field)->store('berkas', 'public');
+                $sanitizedData[$field] = $request->file($field)->store('berkas', 'public');
             } else {
-                $validated[$field] = $profile->$field;
+                $sanitizedData[$field] = $profile->$field;
             }
         }
 
-        $profile->update(array_merge($validated, [
+        $profile->update(array_merge($sanitizedData, [
             'status_pendaftaran' => 'menunggu verifikasi',
             'catatan_perbaikan' => null
         ]));
@@ -241,4 +227,17 @@ class MahasiswaProfileController extends Controller
             ->with(['success' => 'Data berhasil diperbarui dan menunggu verifikasi admin.']);
     }
 
+
+    protected function sanitizeStringInputs(array $data)
+    {
+        $sanitizedData = [];
+        foreach ($data as $key => $value) {
+            if (is_string($value)) {
+                $sanitizedData[$key] = htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+            } else {
+                $sanitizedData[$key] = $value;
+            }
+        }
+        return $sanitizedData;
+    }
 }

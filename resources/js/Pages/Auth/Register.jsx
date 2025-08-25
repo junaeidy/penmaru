@@ -5,6 +5,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Mail, User, LockKeyhole, Fingerprint } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,6 +16,12 @@ export default function Register() {
         password_confirmation: '',
     });
 
+    useEffect(() => {
+        return () => {
+            reset('password', 'password_confirmation');
+        };
+    }, []);
+
     const submit = (e) => {
         e.preventDefault();
         post(route('register'), {
@@ -22,11 +29,32 @@ export default function Register() {
         });
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        let sanitizedValue = value;
+
+        switch (name) {
+            case 'nik':
+                sanitizedValue = sanitizedValue.replace(/\D/g, '');
+                if (sanitizedValue.length > 16) {
+                    sanitizedValue = sanitizedValue.slice(0, 16);
+                }
+                break;
+            case 'name':
+                sanitizedValue = sanitizedValue.replace(/<[^>]*>?/gm, '');
+                break;
+            case 'email':
+                sanitizedValue = sanitizedValue.toLowerCase();
+                break;
+        }
+
+        setData(name, sanitizedValue);
+    };
+
     return (
         <GuestLayout>
             <Head title="Register" />
 
-            {/* Container yang lebih responsif dengan padding yang disesuaikan */}
             <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
                 <div className="text-center mb-6">
                     <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Buat Akun Baru</h2>
@@ -36,7 +64,6 @@ export default function Register() {
                 </div>
 
                 <form onSubmit={submit}>
-                    {/* Menggunakan grid untuk menumpuk pada mobile dan berdampingan pada desktop */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 mb-4">
                         <div className="mb-4 md:mb-0">
                             <InputLabel htmlFor="nik" value="NIK" />
@@ -46,20 +73,21 @@ export default function Register() {
                                 </div>
                                 <TextInput
                                     id="nik"
-                                    type="number"
+                                    type="text"
                                     name="nik"
                                     value={data.nik}
                                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                                     autoComplete="off"
                                     isFocused={true}
-                                    onChange={(e) => setData('nik', e.target.value)}
+                                    onChange={handleInputChange}
                                     required
                                     placeholder="Masukkan NIK Anda"
+                                    inputMode="numeric"
+                                    pattern="\d{16}"
                                 />
                                 <InputError message={errors.nik} className="mt-2" />
                             </div>
                         </div>
-
                         <div>
                             <InputLabel htmlFor="name" value="Nama Lengkap" />
                             <div className="relative mt-1">
@@ -68,11 +96,12 @@ export default function Register() {
                                 </div>
                                 <TextInput
                                     id="name"
+                                    type="text"
                                     name="name"
                                     value={data.name}
                                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                                     autoComplete="name"
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={handleInputChange}
                                     required
                                     placeholder="Masukkan nama lengkap Anda"
                                 />
@@ -80,7 +109,7 @@ export default function Register() {
                             </div>
                         </div>
                     </div>
-
+                    
                     <div className="mb-4">
                         <InputLabel htmlFor="email" value="Email" />
                         <div className="relative mt-1">
@@ -94,12 +123,12 @@ export default function Register() {
                                 value={data.email}
                                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                                 autoComplete="username"
-                                onChange={(e) => setData('email', e.target.value)}
+                                onChange={handleInputChange}
                                 required
                                 placeholder="Masukkan email Anda"
                             />
-                            <InputError message={errors.email} className="mt-2" />
                         </div>
+                        <InputError message={errors.email} className="mt-2" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
@@ -116,14 +145,13 @@ export default function Register() {
                                     value={data.password}
                                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                                     autoComplete="new-password"
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={handleInputChange}
                                     required
                                     placeholder="Buat password Anda"
                                 />
-                                <InputError message={errors.password} className="mt-2" />
                             </div>
+                            <InputError message={errors.password} className="mt-2" />
                         </div>
-
                         <div>
                             <InputLabel htmlFor="password_confirmation" value="Konfirmasi Password" />
                             <div className="relative mt-1">
@@ -137,12 +165,12 @@ export default function Register() {
                                     value={data.password_confirmation}
                                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
                                     autoComplete="new-password"
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    onChange={handleInputChange}
                                     required
                                     placeholder="Konfirmasi password Anda"
                                 />
-                                <InputError message={errors.password_confirmation} className="mt-2" />
                             </div>
+                            <InputError message={errors.password_confirmation} className="mt-2" />
                         </div>
                     </div>
 

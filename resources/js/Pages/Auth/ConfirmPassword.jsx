@@ -48,8 +48,8 @@ export default function ConfirmPassword() {
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="Masukkan password Anda"
                             />
-                            <InputError message={errors.password} className="mt-2" />
                         </div>
+                            <InputError message={errors.password} className="mt-2" />
                     </div>
 
                     <PrimaryButton className="w-full justify-center mt-6" disabled={processing}>

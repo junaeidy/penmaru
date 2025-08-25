@@ -144,6 +144,7 @@ return [
     'custom' => [
         'email' => [
             'required' => 'Alamat email wajib diisi.',
+            'lowercase' => 'Alamat email harus menggunakan huruf kecil.',
         ],
     ],
 

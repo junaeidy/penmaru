@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'nik' => [
                 'required',
                 'digits:16',
@@ -57,8 +57,8 @@ class RegisteredUserController extends Controller
             ],
         ], [
             'nik.required' => 'NIK wajib di isi.',
-            'nik.digits'   => 'NIK harus terdiri dari 16 digit angka.',
-            'nik.unique'   => 'NIK ini sudah terdaftar di sistem.',
+            'nik.digits' => 'NIK harus terdiri dari 16 digit angka.',
+            'nik.unique' => 'NIK ini sudah terdaftar di sistem.',
             'name.required' => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
@@ -67,19 +67,29 @@ class RegisteredUserController extends Controller
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
+        $sanitizedData = [];
+        
+        $sanitizedData['nik'] = preg_replace('/[^0-9]/', '', $validatedData['nik']);
+
+        $sanitizedData['name'] = strip_tags($validatedData['name']);
+        $sanitizedData['name'] = htmlspecialchars($sanitizedData['name'], ENT_QUOTES, 'UTF-8');
+        
+        $sanitizedData['email'] = filter_var($validatedData['email'], FILTER_SANITIZE_EMAIL);
+        $sanitizedData['email'] = htmlspecialchars($sanitizedData['email'], ENT_QUOTES, 'UTF-8');
+
         $user = User::create([
-            'nik' => $request->nik,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'nik' => $sanitizedData['nik'],
+            'name' => $sanitizedData['name'],
+            'email' => $sanitizedData['email'],
+            'password' => Hash::make($validatedData['password']),
         ]);
 
-    Mail::to($user->email)->send(new WelcomeMahasiswaMail($user->name));
-    
-    event(new Registered($user));
+        Mail::to($user->email)->send(new WelcomeMahasiswaMail($user->name));
+        
+        event(new Registered($user));
 
-    return redirect()
-        ->route('login')
-        ->with(['success'=> 'Pendaftaran berhasil! Silakan verifikasi email anda untuk menggunakan akun Anda.']);
+        return redirect()
+            ->route('login')
+            ->with(['success'=> 'Pendaftaran berhasil! Silakan verifikasi email anda untuk menggunakan akun Anda.']);
     }
 }
