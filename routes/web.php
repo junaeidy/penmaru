@@ -7,23 +7,19 @@ use App\Http\Controllers\Admin\ProgramStudiController;
 use App\Http\Controllers\Admin\AdminExamController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\WebsiteContentController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
 use App\Http\Controllers\Mahasiswa\MahasiswaProfileController;
 use App\Http\Controllers\Mahasiswa\ExamController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/registration-info', [HomeController::class, 'registrationInfo'])->name('registration.info');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,6 +30,22 @@ Route::middleware('auth')->group(function () {
 //ADMIN ROUTES
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/dashboard/website-content', [WebsiteContentController::class, 'index'])->name('website-content.index');
+
+    // Informasi Pendaftaran
+    Route::post('/admin/dashboard/website-content/informasi', [WebsiteContentController::class, 'storeInformasi'])->name('website-content.informasi.store');
+    Route::put('/admin/dashboard/website-content/informasi/{informasi}', [WebsiteContentController::class, 'updateInformasi'])->name('website-content.informasi.update');
+    Route::delete('/admin/dashboard/website-content/informasi/{informasi}', [WebsiteContentController::class, 'destroyInformasi'])->name('website-content.informasi.destroy');
+
+    // Hero Section
+    Route::post('/admin/dashboard/website-content/hero', [WebsiteContentController::class, 'storeHero'])->name('website-content.hero.store');
+    Route::put('/admin/dashboard/website-content/hero/{hero}', [WebsiteContentController::class, 'updateHero'])->name('website-content.hero.update');
+    Route::delete('/admin/dashboard/website-content/hero/{hero}', [WebsiteContentController::class, 'destroyHero'])->name('website-content.hero.destroy');
+
+    // FAQ
+    Route::post('/admin/dashboard/website-content/faq', [WebsiteContentController::class, 'storeFaq'])->name('website-content.faq.store');
+    Route::put('/admin/dashboard/website-content/faq/{faq}', [WebsiteContentController::class, 'updateFaq'])->name('website-content.faq.update');
+    Route::delete('/admin/dashboard/website-content/faq/{faq}', [WebsiteContentController::class, 'destroyFaq'])->name('website-content.faq.destroy');
 
     // Verifikasi
     Route::get('/admin/dashboard/verifikasi', [VerifikasiPendaftaranController::class, 'index'])->name('verifikasi.index');

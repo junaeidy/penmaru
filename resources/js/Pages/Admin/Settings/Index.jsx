@@ -2,8 +2,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Settings, Clock, ListChecks, Banknote, Save, Plus, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Settings, Clock, ListChecks, Banknote, Save, Plus, Trash2, XCircle } from 'lucide-react';
 import ConfirmDialog from '@/Components/ConfirmDialog';
 import Edit from '@/Pages/Profile/Edit';
 

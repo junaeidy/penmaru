@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavLink from "@/Components/NavLink";
-import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen, Megaphone, ClipboardCheck, Settings } from "lucide-react";
+import { LayoutDashboard, User, FilePen, ChevronDown, GraduationCap, Building, BookOpen, Megaphone, ClipboardCheck, Settings, Globe } from "lucide-react";
 import ApplicationLogo from '@/Components/ApplicationLogo';
 
 export default function Sidebar({ isSidebarOpen, userRole, user }) {
@@ -102,6 +102,14 @@ export default function Sidebar({ isSidebarOpen, userRole, user }) {
               className="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Pengumuman
+            </NavLink>
+            <NavLink
+              href={route("website-content.index")}
+              active={route().current("website-content.*")}
+              icon={<Globe className="w-5 h-5" />}
+              className="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white transition-colors duration-200"
+            >
+              Kelola Website
             </NavLink>
             <NavLink
               href={route("admin.settings.index")}
