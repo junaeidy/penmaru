@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
+import { LockKeyhole } from 'lucide-react';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -12,7 +13,6 @@ export default function ConfirmPassword() {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('password.confirm'), {
             onFinish: () => reset('password'),
         });
@@ -20,36 +20,43 @@ export default function ConfirmPassword() {
 
     return (
         <GuestLayout>
-            <Head title="Confirm Password" />
+            <Head title="Konfirmasi Password" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                This is a secure area of the application. Please confirm your
-                password before continuing.
-            </div>
-
-            <form onSubmit={submit}>
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
+            {/* Container form dengan styling yang konsisten */}
+            <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
+                <div className="text-center mb-6">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Konfirmasi Password</h2>
+                    <p className="mt-2 text-sm text-gray-500">
+                        Ini adalah area aman aplikasi. Harap konfirmasi password Anda sebelum melanjutkan.
+                    </p>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Confirm
+                <form onSubmit={submit}>
+                    <div>
+                        <InputLabel htmlFor="password" value="Password" />
+                        <div className="relative mt-1">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <LockKeyhole className="w-5 h-5 text-gray-400" />
+                            </div>
+                            <TextInput
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
+                                isFocused={true}
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="Masukkan password Anda"
+                            />
+                            <InputError message={errors.password} className="mt-2" />
+                        </div>
+                    </div>
+
+                    <PrimaryButton className="w-full justify-center mt-6" disabled={processing}>
+                        {processing ? 'Memproses...' : 'Konfirmasi'}
                     </PrimaryButton>
-                </div>
-            </form>
+                </form>
+            </div>
         </GuestLayout>
     );
 }

@@ -11,16 +11,21 @@ class CheckRegistrationPeriod
 {
     public function handle(Request $request, Closure $next)
     {
-        $setting = Setting::first();
-        if ($setting) {
-            $now = Carbon::now();
+        $registrationStart = Setting::getValue('registration_start');
+        $registrationEnd   = Setting::getValue('registration_end');
 
-            if ($now->lt(Carbon::parse($setting->registration_start)) || 
-                $now->gt(Carbon::parse($setting->registration_end))) {
-                return back()->with(['error' => 'Masa pendaftaran sudah habis, Silahkan tunggu periode berikutnya']);
+        if ($registrationStart && $registrationEnd) {
+            $now   = Carbon::now();
+            $start = Carbon::parse($registrationStart)->startOfDay();
+            $end   = Carbon::parse($registrationEnd)->endOfDay();
+
+            if ($now->lt($start) || $now->gt($end)) {
+                return redirect()->route('home')
+                    ->with('error', 'Masa pendaftaran sudah berakhir, silahkan tunggu periode berikutnya.');
             }
         }
 
         return $next($request);
     }
 }
+
